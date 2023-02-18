@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Carousel;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -37,5 +38,12 @@ class DatabaseSeeder extends Seeder
             'password' => "$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",
             'role' => User::IS_USER,
         ]);
+
+        for ($i=1; $i < 4; $i++) {
+            Carousel::create([
+                "link"=>"link $",
+                "image_url"=>"demo.png"
+            ]);
+        }
     }
 }
