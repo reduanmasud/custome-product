@@ -4,11 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductVariation;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    //
+
+    public function admin_index()
+    {
+        $products = Product::all();
+        return view('admin.product.index', ['products'=> $products]);
+    }
+
+    public function admin_add_product()
+    {
+        return view('admin.product.add-product');
+    }
+
     public function index()
     {
         return view("product.index");
@@ -21,9 +33,50 @@ class ProductController extends Controller
         return view('product.add',['categories' => $categories]);
     }
 
+    public function admin_store(Request $request)
+    {
+        $request->validate([
+
+        ]);
+
+
+
+
+        $product = Product::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            //'available' => $request->available,
+        ]);
+
+        $variations = [];
+
+        foreach ($request->product_image as $key => $image) {
+
+            $variation = new ProductVariation();
+            $color = $request->color[$key];
+            $img_url = time().".".$image->extension();
+            $image->move(public_path('product_upload'), $img_url);
+
+            $variation->color = $color;
+            $variation->image_url =  $img_url;
+
+            array_push($variations, $variation);
+        }
+
+        dump($variations);
+        // foreach($variations as $variation)
+        // {
+        //     $product->variations->save($variation);
+        // }
+        $product->variations()->saveMany($variations);
+        return back()->with("success", "Product Successfully added");
+    }
+
+
     public function store(Request $request)
     {
-        
+
         //dd($request);
         $request->validate([
             'product_name' => ['required', 'string', 'max:255'],
@@ -39,7 +92,7 @@ class ProductController extends Controller
         $request->file('product_mockup')->move(public_path('product_upload'), $fileName);
 
 
-        
+
         $product = Product::create([
             'name' => $request->product_name,
             'description' => $request->product_description,
@@ -47,7 +100,7 @@ class ProductController extends Controller
             'price'=>$request->product_price,
             'mockup' => $fileName,
         ]);
-        
+
         //dd($product);
 
         return back()
