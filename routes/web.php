@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CarouselController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
@@ -49,6 +50,14 @@ Route::prefix("user")->group(function(){
     Route::get('/signup', fn()=>view('user.signup'))->name('user.signup');
     Route::get('/login', fn()=>view('user.login'))->name('user.login');
 });
+
+
+Route::prefix('admin')->as('admin.')->group(function() {
+
+    Route::get('/carousel', [CarouselController::class, 'index'])->name('carousel');
+    Route::post('/carousel', [CarouselController::class, 'store']);
+});
+
 
 require __DIR__.'/auth.php';
 
