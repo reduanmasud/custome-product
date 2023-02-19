@@ -57,11 +57,16 @@
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Select Category</label>
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Select a Category</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                <select class="form-select" aria-label="Default select example" name="category_id">
+                    <option value="1" selected>Select a Category</option>
+                    @php
+                        $categories = App\Models\Category::all();
+                    @endphp
+
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
+
                 </select>
             </div>
 

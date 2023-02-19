@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Carousel;
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -45,5 +46,11 @@ class DatabaseSeeder extends Seeder
                 "image_url"=>"demo.png"
             ]);
         }
+
+
+        Category::create([
+            "name" => "undefined",
+            "description" => "This is an undefined Category",
+        ]);
     }
 }

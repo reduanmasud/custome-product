@@ -47,7 +47,8 @@
         <div class="col mt-2">
             <div class="card mt-3" style="width:350px">
 
-                <img src="{{URL::asset('product_upload')}}/{{$product->mockup}}" class="card-img-top" />
+
+                <img src="{{URL::asset('product_upload')}}/{{$product->variations[0]->image_url}}" class="card-img-top" />
                 <div class="card-body">
                     <span class="text-danger">
                         <center><strong>{{$product->name}}</strong></center>

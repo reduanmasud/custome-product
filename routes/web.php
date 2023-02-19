@@ -4,6 +4,7 @@ use App\Http\Controllers\CarouselController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,13 +39,18 @@ Route::prefix("product")->group(function(){
     Route::get("/", [ProductController::class, 'index'])->name("product.index");
     Route::get("/add_product", [ProductController::class, 'add_product_page'])->name("product.add");
     Route::post("/add_product", [ProductController::class, 'store'])->name('product.store');
-    Route::get("/single/{id}", [ProductController::class, 'single'])->name('product.single');
-    Route::get("/single/{id}/personalized", [ProductController::class, 'personalized'])->name('product.personalized');
-    Route::get("/single/{id}/personalized/buy", [ProductController::class, 'buyProductPage'])->name('product.buy');
+    Route::get("/single/{id}/{var_id?}", [ProductController::class, 'single'])->name('product.single');
+    Route::get("/single/{id}/{var_id}", [ProductController::class, 'single_cat'])->name('product.single.cat');
+    Route::get("/single/{id}/{var_id?}/personalized", [ProductController::class, 'personalized'])->name('product.personalized');
+    Route::get("/single/{id}/{var_id?}/personalized/buy", [ProductController::class, 'buyProductPage'])->name('product.buy');
 
     Route::get('/category', [CategoryController::class, 'index'])->name('product.category');
     Route::post('/category', [CategoryController::class, 'store']);
+
+
 });
+
+Route::post('/confirm-buy', [ProductController::class, 'confirm_buy'])->name('confirm-buy');
 
 Route::prefix("user")->group(function(){
     Route::get('/signup', fn()=>view('user.signup'))->name('user.signup');
@@ -58,7 +64,6 @@ Route::prefix('admin')->as('admin.')->group(function() {
 
     Route::get('/carousel', [CarouselController::class, 'index'])->name('carousel');
     Route::post('/carousel', [CarouselController::class, 'store']);
-
 
     Route::get('/product', [ProductController::class, 'admin_index'])->name('product.all');
     Route::get('/product/add', [ProductController::class, 'admin_add_product'])->name('product.add');

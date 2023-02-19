@@ -17,9 +17,10 @@
 
                 @php
                     $products = App\Models\Product::all();
+
                 @endphp
-                @if ($products == null)
-                    <h2>No Products Founds</h2>
+                @if ($products->first() == null)
+                    <h2 class="text-secondary text-center">No Products Founds</h2>
                 @else
                 <div class="table-responsive">
                     <table class="table table-striped table-sm">
@@ -39,7 +40,7 @@
                             <tr>
                                 <td>{{ $product->id }}</td>
                                 <td>{{ $product->name }}</td>
-                                <td>{{ $product->category_id }}</td>
+                                <td><span class="badge text-bg-danger rounded-pill">{{ $product->category->name }}</span></td>
                                 <td>{{ $product->price }}</td>
                                 <td>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
