@@ -21,13 +21,13 @@
             </div>
         @endforeach -->
         <div class="carousel-item active">
-            <img src="{{URL::asset('carousel')}}/{{$carousels[0]->image_url}}" class="d-block w-100" alt="...">
+            <img src="{{URL::asset('carousel')}}/{{$carousels[0]->image_url}}" class="d-block w-100" height="350px" alt="...">
         </div>
         <div class="carousel-item">
-            <img src="{{URL::asset('carousel')}}/{{$carousels[1]->image_url}}" class="d-block w-100" alt="...">
+            <img src="{{URL::asset('carousel')}}/{{$carousels[1]->image_url}}" class="d-block w-100" height="350px" alt="...">
         </div>
         <div class="carousel-item">
-            <img src="{{URL::asset('carousel')}}/{{$carousels[2]->image_url}}" class="d-block w-100" alt="...">
+            <img src="{{URL::asset('carousel')}}/{{$carousels[2]->image_url}}" class="d-block w-100" height="350px" alt="...">
         </div>
 
     </div>
