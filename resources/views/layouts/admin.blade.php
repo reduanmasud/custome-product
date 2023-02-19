@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -118,6 +119,12 @@
                       Add Products
                   </a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('product.category') }}">
+                    <span data-feather="arrow-right" class="align-text-bottom"></span>
+                    Category
+                </a>
+            </li>
               {{-- <li class="nav-item">
                   <a class="nav-link" href="product/add-customize-product.html">
                       <span data-feather="arrow-right" class="align-text-bottom"></span>
