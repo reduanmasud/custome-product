@@ -153,7 +153,7 @@
                       Carousel settings
                   </a>
               </li>
-              <li class="nav-item">
+              {{-- <li class="nav-item">
                   <a class="nav-link" href="#">
                       <span data-feather="file-text" class="align-text-bottom"></span>
                       Last quarter
@@ -170,7 +170,7 @@
                       <span data-feather="file-text" class="align-text-bottom"></span>
                       Year-end sale
                   </a>
-              </li>
+              </li> --}}
           </ul>
       </div>
   </nav>
