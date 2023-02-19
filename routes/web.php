@@ -58,17 +58,20 @@ Route::prefix("user")->group(function(){
 });
 
 
-Route::prefix('admin')->as('admin.')->group(function() {
+Route::middleware('auth')->prefix('admin')->as('admin.')->group(function() {
 
-    Route::get('/index', fn()=>view('admin.index'))->name('/');
+    Route::middleware('is_admin')->group( function () {
+        Route::get('/index', fn()=>view('admin.index'))->name('/');
 
-    Route::get('/carousel', [CarouselController::class, 'index'])->name('carousel');
-    Route::post('/carousel', [CarouselController::class, 'store']);
+        Route::get('/carousel', [CarouselController::class, 'index'])->name('carousel');
+        Route::post('/carousel', [CarouselController::class, 'store']);
 
-    Route::get('/product', [ProductController::class, 'admin_index'])->name('product.all');
-    Route::get('/product/add', [ProductController::class, 'admin_add_product'])->name('product.add');
-    Route::post('/product/add', [ProductController::class, 'admin_store']);
+        Route::get('/product', [ProductController::class, 'admin_index'])->name('product.all');
+        Route::get('/product/add', [ProductController::class, 'admin_add_product'])->name('product.add');
+        Route::post('/product/add', [ProductController::class, 'admin_store']);
 
+        Route::get('/product/category',[ProductController::class, 'product_category'])->name('product.category');
+    });
 
 });
 

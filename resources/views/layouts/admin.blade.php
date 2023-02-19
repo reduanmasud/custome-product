@@ -120,7 +120,7 @@
                   </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{ route('product.category') }}">
+                <a class="nav-link" href="{{ route('admin.product.category') }}">
                     <span data-feather="arrow-right" class="align-text-bottom"></span>
                     Category
                 </a>

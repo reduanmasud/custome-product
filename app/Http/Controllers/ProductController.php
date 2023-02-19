@@ -31,6 +31,15 @@ class ProductController extends Controller
         return $output_file;
     }
 
+    public function product_category()
+    {
+        $this->authorize('only_admin');
+
+        $categories = Category::all();
+        return view('admin.product.category',['categories' => $categories]);
+    }
+
+
     public function confirm_buy(Request $request)
     {
         $request->validate([
