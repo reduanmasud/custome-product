@@ -14,7 +14,7 @@
         <li class="nav-item">
             <a class="nav-link" aria-current="page" href="{{ route('admin./') }}">Dashboard</a>
           </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
           <a class="nav-link" aria-current="page" href="{{ route('product.add') }}">Add Product</a>
         </li>
         <li class="nav-item">
@@ -22,7 +22,7 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" aria-current="page" href="{{ route('product.category') }}">Category</a>
-        </li>
+        </li> --}}
 
         @endcan
         <!-- <li class="nav-item dropdown">
