@@ -20,4 +20,10 @@ class Order extends Model
         'status',
         'user_id',
     ];
+
+
+    public function product()
+    {
+       return $this->belongsTo(Product::class);
+    }
 }

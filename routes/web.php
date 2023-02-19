@@ -71,6 +71,8 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function() {
         Route::post('/product/add', [ProductController::class, 'admin_store']);
 
         Route::get('/product/category',[ProductController::class, 'product_category'])->name('product.category');
+
+        Route::get('/order', [ProductController::class, 'orders'])->name('orders');
     });
 
 });

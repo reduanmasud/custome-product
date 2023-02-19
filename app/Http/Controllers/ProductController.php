@@ -31,6 +31,14 @@ class ProductController extends Controller
         return $output_file;
     }
 
+
+    public function orders()
+    {
+        $orders = Order::all();
+        return view('admin.orders',['orders'=>$orders]);
+    }
+
+
     public function product_category()
     {
         $this->authorize('only_admin');
