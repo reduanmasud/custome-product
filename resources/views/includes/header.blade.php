@@ -12,6 +12,9 @@
         </li>
         @can('only_admin')
         <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{{ route('admin./') }}">Dashboard</a>
+          </li>
+        <li class="nav-item">
           <a class="nav-link" aria-current="page" href="{{ route('product.add') }}">Add Product</a>
         </li>
         <li class="nav-item">
@@ -37,7 +40,7 @@
           <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
         </li> -->
       </ul>
-      
+
       <ul class="d-flex navbar-nav">
 
       @auth
@@ -61,7 +64,7 @@
       @endauth
 
       </ul>
-      
+
     </div>
   </div>
 </nav>
