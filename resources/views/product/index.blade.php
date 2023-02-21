@@ -7,7 +7,7 @@
 @endphp
 
 <div style="height: 350px; overflow:hidden;">
-<div id="carouselExampleIndicators" class="carousel slide" style="height:350px" data-bs-ride="true">
+<div id="carouselExampleIndicators" class="carousel slide" style="height:350px; margin: 30px; border-radius: 30px !important;" data-bs-ride="true">
     <div class="carousel-indicators">
         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -42,14 +42,14 @@
 </div>
 </div>
 <div class="container mt-3">
-    <div class="row row-cols-3 justify-content-start">
+    <div class="row row-cols-5 justify-content-start">
         @foreach (App\Models\Product::all() as $product)
         <div class="col mt-2">
-            <div class="card mt-3" style="width:350px">
+            <div class="card mt-3" style="width:250px; height: 450px;">
 
 
-                <img src="{{URL::asset('product_upload')}}/{{$product->variations[0]->image_url}}" class="card-img-top" />
-                <div class="card-body">
+                <img style="height: 200px" src="{{URL::asset('product_upload')}}/{{$product->variations[0]->image_url}}" class="card-img-top" />
+                <div class="card-body" >
                     <span class="text-danger">
                         <center><strong>{{$product->name}}</strong></center>
                     </span>
