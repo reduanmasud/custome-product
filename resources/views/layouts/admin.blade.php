@@ -271,12 +271,26 @@
       </a>
     </li>
 
-    <!-- Nav Item - Users -->
-    <li class="nav-item">
-      <a class="nav-link" href="#">
+    <!-- Nav Item - User Management Menu -->
+    <li class="nav-item {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? 'active' : '' }}">
+      <a class="nav-link {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? '' : 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUserManagement" aria-expanded="{{ request()->routeIs('admin.users.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? 'true' : 'false' }}" aria-controls="collapseUserManagement">
         <i class="fas fa-fw fa-users"></i>
         <span>User Management</span>
       </a>
+      <div id="collapseUserManagement" class="collapse {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? 'show' : '' }}" aria-labelledby="headingUserManagement" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">User Management:</h6>
+          @can('view users')
+          <a class="collapse-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">Users</a>
+          @endcan
+          @can('view roles')
+          <a class="collapse-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}">Roles</a>
+          @endcan
+          @can('view permissions')
+          <a class="collapse-item {{ request()->routeIs('admin.permissions.*') ? 'active' : '' }}" href="{{ route('admin.permissions.index') }}">Permissions</a>
+          @endcan
+        </div>
+      </div>
     </li>
 
     <!-- Divider -->
@@ -390,5 +404,8 @@
   // This is needed if you're using the self-hosted version of Font Awesome
   // window.FontAwesomeConfig = { autoReplaceSvg: 'nest' }
 </script>
+
+<!-- Page-specific scripts -->
+@stack('scripts')
 </body>
 </html>

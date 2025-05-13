@@ -3,7 +3,10 @@
 use App\Http\Controllers\Admin\CarouselController as AdminCarouselController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PermissionController as AdminPermissionController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\RoleController as AdminRoleController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\CarouselController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
@@ -107,6 +110,33 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function() {
         Route::get('/order/{id}', [AdminOrderController::class, 'show'])->name('order.show');
         Route::put('/order/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('order.update.status');
         Route::delete('/order/{id}', [AdminOrderController::class, 'destroy'])->name('order.destroy');
+
+        // User Management Routes
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
+        Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+        Route::get('/users/{id}', [AdminUserController::class, 'show'])->name('users.show');
+        Route::get('/users/{id}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+        // Role Management Routes
+        Route::get('/roles', [AdminRoleController::class, 'index'])->name('roles.index');
+        Route::get('/roles/create', [AdminRoleController::class, 'create'])->name('roles.create');
+        Route::post('/roles', [AdminRoleController::class, 'store'])->name('roles.store');
+        Route::get('/roles/{id}', [AdminRoleController::class, 'show'])->name('roles.show');
+        Route::get('/roles/{id}/edit', [AdminRoleController::class, 'edit'])->name('roles.edit');
+        Route::put('/roles/{id}', [AdminRoleController::class, 'update'])->name('roles.update');
+        Route::delete('/roles/{id}', [AdminRoleController::class, 'destroy'])->name('roles.destroy');
+
+        // Permission Management Routes
+        Route::get('/permissions', [AdminPermissionController::class, 'index'])->name('permissions.index');
+        Route::get('/permissions/create', [AdminPermissionController::class, 'create'])->name('permissions.create');
+        Route::post('/permissions', [AdminPermissionController::class, 'store'])->name('permissions.store');
+        Route::get('/permissions/{id}', [AdminPermissionController::class, 'show'])->name('permissions.show');
+        Route::get('/permissions/{id}/edit', [AdminPermissionController::class, 'edit'])->name('permissions.edit');
+        Route::put('/permissions/{id}', [AdminPermissionController::class, 'update'])->name('permissions.update');
+        Route::delete('/permissions/{id}', [AdminPermissionController::class, 'destroy'])->name('permissions.destroy');
     });
 
 });

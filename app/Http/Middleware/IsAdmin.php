@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,10 +17,11 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::user()->role != User::IS_ADMIN)
-        {
-            abort('404');
+        // Check if user has any admin role (super-admin or admin)
+        if (!Auth::user()->hasAnyRole(['super-admin', 'admin'])) {
+            abort(403, 'Unauthorized action.');
         }
+
         return $next($request);
     }
 }
