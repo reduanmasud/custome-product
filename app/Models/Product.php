@@ -21,7 +21,9 @@ class Product extends Model
         'category_id',
         'price',
         'available',
-        'mockup'
+        'mockup',
+        'sku',
+        'inventory'
     ];
 
 

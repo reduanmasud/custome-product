@@ -95,6 +95,8 @@ class ProductService implements ProductServiceInterface
             'price' => $request->price,
             'category_id' => $categoryId,
             'available' => $request->available ?? 1,
+            'sku' => $request->sku,
+            'inventory' => $request->inventory,
         ]);
 
         if ($request->has('product_image')) {
@@ -132,18 +134,32 @@ class ProductService implements ProductServiceInterface
             'price' => $request->price ?? $product->price,
             'category_id' => $request->category_id ?? $product->category_id,
             'available' => $request->has('available') ? $request->available : $product->available,
+            'sku' => $request->sku ?? $product->sku,
+            'inventory' => $request->inventory ?? $product->inventory,
         ];
 
         if ($request->hasFile('mockup')) {
             // Delete old mockup if exists
             if ($product->mockup) {
-                $this->fileUploadService->delete('product_upload/' . $product->mockup);
+                $this->fileUploadService->delete("product_upload/{$product->mockup}");
             }
 
             $data['mockup'] = $this->fileUploadService->upload(
                 $request->file('mockup'),
                 'product_upload'
             );
+        }
+
+        // Handle new product variations if any
+        if ($request->has('product_image')) {
+            foreach ($request->product_image as $key => $image) {
+                $imgUrl = $this->fileUploadService->upload($image, 'product_upload');
+
+                $this->productRepository->addVariation($product->id, [
+                    'color' => $request->color[$key] ?? null,
+                    'image_url' => $imgUrl,
+                ]);
+            }
         }
 
         return $this->productRepository->update($id, $data);
@@ -166,14 +182,14 @@ class ProductService implements ProductServiceInterface
         // Delete product variations
         foreach ($product->variations as $variation) {
             if ($variation->image_url) {
-                $this->fileUploadService->delete('product_upload/' . $variation->image_url);
+                $this->fileUploadService->delete("product_upload/{$variation->image_url}");
             }
             $variation->delete();
         }
 
         // Delete product mockup
         if ($product->mockup) {
-            $this->fileUploadService->delete('product_upload/' . $product->mockup);
+            $this->fileUploadService->delete("product_upload/{$product->mockup}");
         }
 
         return $this->productRepository->delete($id);

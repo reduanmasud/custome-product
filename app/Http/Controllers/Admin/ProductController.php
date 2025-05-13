@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreProductRequest;
+use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Interfaces\Services\CategoryServiceInterface;
 use App\Interfaces\Services\ProductServiceInterface;
 use App\Models\Category;
@@ -94,19 +96,11 @@ class ProductController extends Controller
     /**
      * Store a newly created product in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Admin\StoreProductRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'product_image.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'color.*' => 'nullable|string|max:50',
-        ]);
-
         $this->productService->createProductFromAdmin($request);
 
         return back()->with('success', 'Product successfully added');
@@ -154,22 +148,12 @@ class ProductController extends Controller
     /**
      * Update the specified product in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Admin\UpdateProductRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'available' => 'nullable|boolean',
-            'product_image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'color.*' => 'nullable|string|max:50',
-        ]);
-
         $this->productService->updateProduct($id, $request);
 
         return redirect()->route('admin.product.index')->with('success', 'Product successfully updated');
