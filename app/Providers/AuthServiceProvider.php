@@ -31,7 +31,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
-        Gate::define("only_admin", fn(User $user) => $user->role == User::IS_ADMIN);
+        // Define gates for admin access using Spatie permissions
+        Gate::define("only_admin", fn(User $user) => $user->hasAnyRole(['super-admin', 'admin']));
     }
 }

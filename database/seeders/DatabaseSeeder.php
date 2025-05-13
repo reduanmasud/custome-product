@@ -8,6 +8,7 @@ use App\Models\Carousel;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,18 +27,18 @@ class DatabaseSeeder extends Seeder
         // ]);
 
 
-        User::create([
+        // Create admin user and assign super-admin role
+        $admin = User::create([
             'name' => "Admin",
             'email' => "admin@gmail.com",
             'password' => "$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",
-            'role' => User::IS_ADMIN,
         ]);
 
-        User::create([
+        // Create regular user and assign user role
+        $user = User::create([
             'name' => "User",
             'email' => "user@gmail.com",
             'password' => "$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",
-            'role' => User::IS_USER,
         ]);
 
         for ($i=1; $i < 4; $i++) {
@@ -55,5 +56,9 @@ class DatabaseSeeder extends Seeder
 
         // Seed roles and permissions
         $this->call(RolesAndPermissionsSeeder::class);
+
+        // Assign roles to users
+        $admin->assignRole('super-admin');
+        $user->assignRole('user');
     }
 }
