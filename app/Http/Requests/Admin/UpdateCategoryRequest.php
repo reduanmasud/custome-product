@@ -13,7 +13,8 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        // Only users with 'edit categories' permission can update categories
+        return auth()->user()->can('edit categories');
     }
 
     /**

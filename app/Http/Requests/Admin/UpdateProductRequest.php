@@ -14,8 +14,8 @@ class UpdateProductRequest extends FormRequest
      */
     public function authorize()
     {
-        // Only admin users can update products
-        return auth()->user()->is_admin;
+        // Only users with 'edit products' permission can update products
+        return auth()->user()->can('edit products');
     }
 
     /**
@@ -31,9 +31,9 @@ class UpdateProductRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0'],
             'category_id' => ['required', 'exists:categories,id'],
             'sku' => [
-                'required', 
-                'string', 
-                'max:50', 
+                'required',
+                'string',
+                'max:50',
                 Rule::unique('products', 'sku')->ignore($this->route('id'))
             ],
             'inventory' => ['required', 'integer', 'min:0'],

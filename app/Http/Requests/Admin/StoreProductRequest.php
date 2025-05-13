@@ -14,8 +14,8 @@ class StoreProductRequest extends FormRequest
      */
     public function authorize()
     {
-        // Only admin users can create products
-        return auth()->user()->is_admin;
+        // Only users with 'create products' permission can create products
+        return auth()->user()->can('create products');
     }
 
     /**
