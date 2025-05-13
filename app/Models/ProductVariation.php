@@ -13,6 +13,7 @@ class ProductVariation extends Model
         "product_id",
         "image_url",
         "color",
+        "position",
     ];
 
     public function product()

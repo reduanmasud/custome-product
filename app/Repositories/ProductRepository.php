@@ -139,10 +139,11 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function getPaginated(int $perPage = 15, int $page = 1, array $filters = []): LengthAwarePaginator
     {
-        $query = Product::with('category');
+        $query = Product::with(['category', 'variations']);
 
         // Apply filters if any
         if (!empty($filters)) {
+            // Search by name or description
             if (isset($filters['search']) && !empty($filters['search'])) {
                 $search = $filters['search'];
                 $query->where(function ($q) use ($search) {
@@ -151,10 +152,17 @@ class ProductRepository implements ProductRepositoryInterface
                 });
             }
 
+            // Search by SKU
+            if (isset($filters['sku']) && !empty($filters['sku'])) {
+                $query->where('sku', 'like', "%{$filters['sku']}%");
+            }
+
+            // Filter by category
             if (isset($filters['category_id']) && !empty($filters['category_id'])) {
                 $query->where('category_id', $filters['category_id']);
             }
 
+            // Filter by price range
             if (isset($filters['price_min']) && is_numeric($filters['price_min'])) {
                 $query->where('price', '>=', $filters['price_min']);
             }
@@ -163,9 +171,56 @@ class ProductRepository implements ProductRepositoryInterface
                 $query->where('price', '<=', $filters['price_max']);
             }
 
-            if (isset($filters['available']) && in_array($filters['available'], [0, 1])) {
+            // Filter by availability
+            if (isset($filters['available']) && in_array($filters['available'], ['0', '1'])) {
                 $query->where('available', $filters['available']);
             }
+
+            // Filter by inventory status
+            if (isset($filters['inventory_status']) && !empty($filters['inventory_status'])) {
+                switch ($filters['inventory_status']) {
+                    case 'in_stock':
+                        $query->where('inventory', '>', 0);
+                        break;
+                    case 'out_of_stock':
+                        $query->where('inventory', '=', 0);
+                        break;
+                    case 'low_stock':
+                        $query->where('inventory', '>', 0)
+                              ->where('inventory', '<=', 5);
+                        break;
+                }
+            }
+
+            // Apply sorting
+            if (isset($filters['sort']) && !empty($filters['sort'])) {
+                switch ($filters['sort']) {
+                    case 'name_asc':
+                        $query->orderBy('name', 'asc');
+                        break;
+                    case 'name_desc':
+                        $query->orderBy('name', 'desc');
+                        break;
+                    case 'price_asc':
+                        $query->orderBy('price', 'asc');
+                        break;
+                    case 'price_desc':
+                        $query->orderBy('price', 'desc');
+                        break;
+                    case 'newest':
+                        $query->orderBy('created_at', 'desc');
+                        break;
+                    case 'oldest':
+                        $query->orderBy('created_at', 'asc');
+                        break;
+                }
+            } else {
+                // Default sorting
+                $query->orderBy('id', 'desc');
+            }
+        } else {
+            // Default sorting if no filters
+            $query->orderBy('id', 'desc');
         }
 
         return $query->paginate($perPage, ['*'], 'page', $page);

@@ -76,6 +76,23 @@ interface ProductServiceInterface
     public function handleBase64Upload(string $base64String, string $extension = 'jpg'): string;
 
     /**
+     * Delete a file
+     *
+     * @param string $path
+     * @return bool
+     */
+    public function deleteFile(string $path): bool;
+
+    /**
+     * Add a variation to a product
+     *
+     * @param mixed $productId
+     * @param array $variationData
+     * @return mixed
+     */
+    public function addVariation($productId, array $variationData);
+
+    /**
      * Get paginated products
      *
      * @param int $perPage

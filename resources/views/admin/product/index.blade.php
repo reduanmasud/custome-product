@@ -30,53 +30,122 @@
 
                 <!-- Search and Filter Form -->
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <i class="fas fa-filter me-1"></i>
-                        Search & Filter Products
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-filter me-1"></i>
+                            Search & Filter Products
+                        </div>
+                        <button class="btn btn-sm btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="true" aria-controls="filterCollapse">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <form action="{{ route('admin.product.all') }}" method="GET" class="row g-3">
-                            <div class="col-md-4">
-                                <label for="search" class="form-label">Search</label>
-                                <input type="text" class="form-control" id="search" name="search"
-                                    placeholder="Search by name or description" value="{{ request('search') }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="category_id" class="form-label">Category</label>
-                                <select class="form-select" id="category_id" name="category_id">
-                                    <option value="">All Categories</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="price_min" class="form-label">Min Price</label>
-                                <input type="number" class="form-control" id="price_min" name="price_min"
-                                    placeholder="Min" value="{{ request('price_min') }}">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="price_max" class="form-label">Max Price</label>
-                                <input type="number" class="form-control" id="price_max" name="price_max"
-                                    placeholder="Max" value="{{ request('price_max') }}">
-                            </div>
-                            <div class="col-md-1">
-                                <label for="per_page" class="form-label">Per Page</label>
-                                <select class="form-select" id="per_page" name="per_page">
-                                    @foreach([15, 25, 50, 100] as $value)
-                                        <option value="{{ $value }}" {{ $perPage == $value ? 'selected' : '' }}>
-                                            {{ $value }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary">Apply Filters</button>
-                                <a href="{{ route('admin.product.all') }}" class="btn btn-secondary">Reset</a>
-                            </div>
-                        </form>
+                    <div class="collapse show" id="filterCollapse">
+                        <div class="card-body">
+                            <form action="{{ route('admin.product.all') }}" method="GET" class="row g-3">
+                                <!-- Basic Search -->
+                                <div class="col-md-6">
+                                    <label for="search" class="form-label">Search</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="search" name="search"
+                                            placeholder="Search by name or description" value="{{ request('search') }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="sku" class="form-label">SKU</label>
+                                    <input type="text" class="form-control" id="sku" name="sku"
+                                        placeholder="Enter SKU" value="{{ request('sku') }}">
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="sort" class="form-label">Sort By</label>
+                                    <select class="form-select" id="sort" name="sort">
+                                        <option value="">Default</option>
+                                        <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Name (A-Z)</option>
+                                        <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Name (Z-A)</option>
+                                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price (Low to High)</option>
+                                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price (High to Low)</option>
+                                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                                    </select>
+                                </div>
+
+                                <!-- Category Filter -->
+                                <div class="col-md-3">
+                                    <label for="category_id" class="form-label">Category</label>
+                                    <select class="form-select" id="category_id" name="category_id">
+                                        <option value="">All Categories</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Price Range -->
+                                <div class="col-md-2">
+                                    <label for="price_min" class="form-label">Min Price</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="price_min" name="price_min"
+                                            placeholder="Min" value="{{ request('price_min') }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="price_max" class="form-label">Max Price</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="price_max" name="price_max"
+                                            placeholder="Max" value="{{ request('price_max') }}">
+                                    </div>
+                                </div>
+
+                                <!-- Inventory Status -->
+                                <div class="col-md-3">
+                                    <label for="inventory_status" class="form-label">Inventory Status</label>
+                                    <select class="form-select" id="inventory_status" name="inventory_status">
+                                        <option value="">All</option>
+                                        <option value="in_stock" {{ request('inventory_status') == 'in_stock' ? 'selected' : '' }}>In Stock</option>
+                                        <option value="out_of_stock" {{ request('inventory_status') == 'out_of_stock' ? 'selected' : '' }}>Out of Stock</option>
+                                        <option value="low_stock" {{ request('inventory_status') == 'low_stock' ? 'selected' : '' }}>Low Stock (≤ 5)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Availability -->
+                                <div class="col-md-2">
+                                    <label for="available" class="form-label">Availability</label>
+                                    <select class="form-select" id="available" name="available">
+                                        <option value="">All</option>
+                                        <option value="1" {{ request('available') == '1' ? 'selected' : '' }}>Available</option>
+                                        <option value="0" {{ request('available') == '0' ? 'selected' : '' }}>Unavailable</option>
+                                    </select>
+                                </div>
+
+                                <!-- Per Page -->
+                                <div class="col-md-2">
+                                    <label for="per_page" class="form-label">Per Page</label>
+                                    <select class="form-select" id="per_page" name="per_page">
+                                        @foreach([15, 25, 50, 100] as $value)
+                                            <option value="{{ $value }}" {{ $perPage == $value ? 'selected' : '' }}>
+                                                {{ $value }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="col-12 mt-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-filter me-1"></i> Apply Filters
+                                    </button>
+                                    <a href="{{ route('admin.product.all') }}" class="btn btn-secondary">
+                                        <i class="fas fa-undo me-1"></i> Reset
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
@@ -121,13 +190,17 @@
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('admin.product.show', $product->id) }}" class="btn btn-sm btn-info">
+                                                <a href="{{ route('admin.product.show', $product->id) }}" class="btn btn-sm btn-info" title="View Product">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-sm btn-primary">
+                                                <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-sm btn-primary" title="Edit Product">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $product->id }}">
+                                                <a href="{{ route('admin.product.variations', $product->id) }}" class="btn btn-sm btn-success" title="Manage Variations">
+                                                    <i class="fas fa-images"></i>
+                                                    <span class="badge bg-light text-dark">{{ $product->variations->count() }}</span>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $product->id }}" title="Delete Product">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>

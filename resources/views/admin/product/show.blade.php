@@ -80,6 +80,9 @@
                         <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-primary">
                             <i class="fas fa-edit"></i> Edit Product
                         </a>
+                        <a href="{{ route('admin.product.variations', $product->id) }}" class="btn btn-success">
+                            <i class="fas fa-images"></i> Manage Variations ({{ $product->variations->count() }})
+                        </a>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
                             <i class="fas fa-trash"></i> Delete Product
                         </button>
@@ -108,7 +111,7 @@
                                     Variation {{ $loop->iteration }}
                                 </div>
                                 @if($variation->image_url)
-                                    <img src="{{ asset('product_upload/' . $variation->image_url) }}" 
+                                    <img src="{{ asset('product_upload/' . $variation->image_url) }}"
                                         class="card-img-top" alt="Product Variation">
                                 @endif
                                 <div class="card-body">
@@ -116,7 +119,7 @@
                                         <div class="mb-2">
                                             <strong>Color:</strong>
                                             <div class="d-flex align-items-center">
-                                                <div style="width: 20px; height: 20px; background-color: {{ $variation->color }}; 
+                                                <div style="width: 20px; height: 20px; background-color: {{ $variation->color }};
                                                     border: 1px solid #ddd; margin-right: 10px;"></div>
                                                 {{ $variation->color }}
                                             </div>

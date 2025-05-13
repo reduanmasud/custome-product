@@ -265,6 +265,29 @@ class ProductService implements ProductServiceInterface
     }
 
     /**
+     * Delete a file
+     *
+     * @param string $path
+     * @return bool
+     */
+    public function deleteFile(string $path): bool
+    {
+        return $this->fileUploadService->delete($path);
+    }
+
+    /**
+     * Add a variation to a product
+     *
+     * @param mixed $productId
+     * @param array $variationData
+     * @return mixed
+     */
+    public function addVariation($productId, array $variationData)
+    {
+        return $this->productRepository->addVariation($productId, $variationData);
+    }
+
+    /**
      * Get paginated products
      *
      * @param int $perPage
