@@ -5,6 +5,7 @@ namespace App\Interfaces\Services;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface CategoryServiceInterface
 {
@@ -14,6 +15,15 @@ interface CategoryServiceInterface
      * @return Collection
      */
     public function getAllCategories(): Collection;
+
+    /**
+     * Get paginated categories
+     *
+     * @param int $perPage
+     * @param array $options
+     * @return LengthAwarePaginator
+     */
+    public function getPaginatedCategories(int $perPage = 15, array $options = []): LengthAwarePaginator;
 
     /**
      * Get category by ID

@@ -26,12 +26,34 @@ class CategoryController extends Controller
     /**
      * Display a listing of the categories.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = $this->categoryService->getAllCategories();
-        return view('admin.product.category', ['categories' => $categories]);
+        // Get pagination parameters from request
+        $perPage = $request->input('per_page', 10); // Default 10 items per page
+        $search = $request->input('search');
+        $sortBy = $request->input('sort_by', 'id');
+        $sortDirection = $request->input('sort_direction', 'desc');
+
+        // Prepare options for pagination
+        $options = [
+            'search' => $search,
+            'sort_by' => $sortBy,
+            'sort_direction' => $sortDirection,
+        ];
+
+        // Get paginated categories
+        $categories = $this->categoryService->getPaginatedCategories($perPage, $options);
+
+        return view('admin.product.category', [
+            'categories' => $categories,
+            'search' => $search,
+            'perPage' => $perPage,
+            'sortBy' => $sortBy,
+            'sortDirection' => $sortDirection
+        ]);
     }
 
     /**
@@ -62,11 +84,11 @@ class CategoryController extends Controller
     public function show($id)
     {
         $category = $this->categoryService->getCategoryById($id);
-        
+
         if (!$category) {
             abort(404);
         }
-        
+
         return view('admin.product.category-show', ['category' => $category]);
     }
 
@@ -79,11 +101,11 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = $this->categoryService->getCategoryById($id);
-        
+
         if (!$category) {
             abort(404);
         }
-        
+
         return view('admin.product.category-edit', ['category' => $category]);
     }
 
@@ -116,11 +138,11 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $result = $this->categoryService->deleteCategory($id);
-        
+
         if (!$result) {
             return back()->with('error', 'Cannot delete category with associated products');
         }
-        
+
         return redirect()->route('admin.product.category')->with('success', 'Category successfully deleted');
     }
 }

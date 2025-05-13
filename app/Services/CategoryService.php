@@ -8,6 +8,7 @@ use App\Interfaces\Services\FileUploadServiceInterface;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CategoryService implements CategoryServiceInterface
 {
@@ -43,6 +44,18 @@ class CategoryService implements CategoryServiceInterface
     public function getAllCategories(): Collection
     {
         return $this->categoryRepository->getAll();
+    }
+
+    /**
+     * Get paginated categories
+     *
+     * @param int $perPage
+     * @param array $options
+     * @return LengthAwarePaginator
+     */
+    public function getPaginatedCategories(int $perPage = 15, array $options = []): LengthAwarePaginator
+    {
+        return $this->categoryRepository->getPaginated($perPage, ['*'], $options);
     }
 
     /**
