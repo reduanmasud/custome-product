@@ -48,9 +48,20 @@
         @foreach (App\Models\Product::all() as $product)
         <div class="col mt-2">
             <div class="card mt-3" style="width:250px; height: 450px;">
-
-
-                <img style="height: 200px" src="{{URL::asset('product_upload')}}/{{$product->variations[0]->image_url}}" class="card-img-top" />
+                @php
+                    $hasImage = false;
+                    if($product->variations && $product->variations->isNotEmpty() && isset($product->variations[0]->image_url)) {
+                        $hasImage = true;
+                        $imageUrl = $product->variations[0]->image_url;
+                    }
+                @endphp
+                
+                @if($hasImage)
+                    <img style="height: 200px" src="{{URL::asset('product_upload')}}/{{$imageUrl}}" class="card-img-top" />
+                @else
+                    <img style="height: 200px" src="{{URL::asset('product_upload')}}/placeholder.jpg" class="card-img-top" />
+                @endif
+                
                 <div class="card-body" >
                     <span class="text-danger">
                         <center><strong>{{$product->name}}</strong></center>

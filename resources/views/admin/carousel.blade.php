@@ -40,7 +40,7 @@
                 <div class="col-md-12 mb-4">
                     <h2>Slide 1</h2>
 
-                    @if ($carousels[0]->link)
+                    @if (isset($carousels[0]) && $carousels[0]->link)
                         <div class="mb-3">
                             <label for="" class="form-label">Link</label>
                             <input type="text" name="link[1]" value="{{ $carousels[0]->link }}" class="form-control" />
@@ -70,7 +70,7 @@
                 @csrf
                 <div class="col-md-12 mb-4">
                     <h2>Slide 2</h2>
-                    @if ($carousels[1]->link)
+                    @if (isset($carousels[1]) && $carousels[1]->link)
                         <div class="mb-3">
                             <label for="" class="form-label">Link</label>
                             <input type="text" name="link[2]" value="{{ $carousels[1]->link }}" class="form-control" />
@@ -100,7 +100,7 @@
                 @csrf
                 <div class="col-md-12 mb-4">
                     <h2>Slide 3</h2>
-                    @if ($carousels[2]->link)
+                    @if (isset($carousels[2]) && $carousels[2]->link)
                         <div class="mb-3">
                             <label for="" class="form-label">Link</label>
                             <input type="text" name="link[3]" value="{{ $carousels[2]->link }}"
@@ -121,10 +121,10 @@
                             <label for="" class="form-label">File</label>
                             <input type="file" name="image[3]" class="form-control" id="">
                         </div>
-                        @endif
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-success">Update</button>
-                        </div>
+                    @endif
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-success">Update</button>
+                    </div>
                 </div>
             </form>
         </div>
