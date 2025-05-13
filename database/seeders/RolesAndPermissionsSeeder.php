@@ -80,6 +80,11 @@ class RolesAndPermissionsSeeder extends Seeder
                 'edit settings',
                 'manage backups',
             ],
+
+            // Audit Logs
+            'audit' => [
+                'view audit logs',
+            ],
         ];
 
         // Create all permissions
@@ -138,6 +143,9 @@ class RolesAndPermissionsSeeder extends Seeder
             // System Settings
             'view settings',
             'edit settings',
+
+            // Audit Logs
+            'view audit logs',
         ]);
 
         // Manager - focused on product, category, and order management

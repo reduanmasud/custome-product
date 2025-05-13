@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CarouselController as AdminCarouselController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\AuditController as AdminAuditController;
 use App\Http\Controllers\Admin\PermissionController as AdminPermissionController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\RoleController as AdminRoleController;
@@ -138,6 +139,10 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function() {
         Route::get('/permissions/{id}/edit', [AdminPermissionController::class, 'edit'])->middleware('permission:edit permissions')->name('permissions.edit');
         Route::put('/permissions/{id}', [AdminPermissionController::class, 'update'])->middleware('permission:edit permissions')->name('permissions.update');
         Route::delete('/permissions/{id}', [AdminPermissionController::class, 'destroy'])->middleware('permission:delete permissions')->name('permissions.destroy');
+
+        // Audit Log Routes
+        Route::get('/audits', [AdminAuditController::class, 'index'])->middleware('permission:view audit logs')->name('audits.index');
+        Route::get('/audits/{id}', [AdminAuditController::class, 'show'])->middleware('permission:view audit logs')->name('audits.show');
     });
 
 });

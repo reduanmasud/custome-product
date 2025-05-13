@@ -323,6 +323,16 @@
     </li>
     @endcanany
 
+    <!-- Nav Item - Audit Logs -->
+    @can('view audit logs')
+    <li class="nav-item {{ request()->routeIs('admin.audits.*') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('admin.audits.index') }}">
+        <i class="fas fa-fw fa-history"></i>
+        <span>Audit Logs</span>
+      </a>
+    </li>
+    @endcan
+
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 

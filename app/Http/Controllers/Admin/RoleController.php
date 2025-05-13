@@ -4,11 +4,31 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use App\Models\Audit\Role;
+use App\Models\Audit\Permission;
+use App\Services\RbacService;
+use Exception;
 
 class RoleController extends Controller
 {
+    /**
+     * The RBAC service instance.
+     *
+     * @var \App\Services\RbacService
+     */
+    protected $rbacService;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param  \App\Services\RbacService  $rbacService
+     * @return void
+     */
+    public function __construct(RbacService $rbacService)
+    {
+        $this->rbacService = $rbacService;
+    }
+
     /**
      * Display a listing of the roles.
      *
@@ -38,7 +58,8 @@ class RoleController extends Controller
         return view('admin.roles.index', [
             'roles' => $roles,
             'search' => $search,
-            'perPage' => $perPage
+            'perPage' => $perPage,
+            'hasSuperAdmin' => $this->rbacService->hasSuperAdmin()
         ]);
     }
 
@@ -79,11 +100,15 @@ class RoleController extends Controller
             'permissions' => ['required', 'array'],
         ]);
 
-        $role = Role::create(['name' => $request->name]);
-        $role->syncPermissions($request->permissions);
+        try {
+            $role = $this->rbacService->createRole($request->name, $request->permissions);
 
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'Role created successfully.');
+            return redirect()->route('admin.roles.index')
+                ->with('success', 'Role created successfully.');
+        } catch (Exception $e) {
+            return back()->withInput()
+                ->with('error', 'Failed to create role: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -155,13 +180,15 @@ class RoleController extends Controller
             'permissions' => ['required', 'array'],
         ]);
 
-        $role->name = $request->name;
-        $role->save();
-        
-        $role->syncPermissions($request->permissions);
+        try {
+            $this->rbacService->updateRole($role, $request->name, $request->permissions);
 
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'Role updated successfully.');
+            return redirect()->route('admin.roles.index')
+                ->with('success', 'Role updated successfully.');
+        } catch (Exception $e) {
+            return back()->withInput()
+                ->with('error', 'Failed to update role: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -178,20 +205,14 @@ class RoleController extends Controller
         }
 
         $role = Role::findOrFail($id);
-        
-        // Prevent deleting super-admin role
-        if ($role->name === 'super-admin') {
-            return back()->with('error', 'The super-admin role cannot be deleted.');
+
+        try {
+            $this->rbacService->deleteRole($role);
+
+            return redirect()->route('admin.roles.index')
+                ->with('success', 'Role deleted successfully.');
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        // Check if role is assigned to any users
-        if ($role->users->count() > 0) {
-            return back()->with('error', 'This role is assigned to users and cannot be deleted.');
-        }
-
-        $role->delete();
-
-        return redirect()->route('admin.roles.index')
-            ->with('success', 'Role deleted successfully.');
     }
 }
