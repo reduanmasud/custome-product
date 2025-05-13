@@ -122,7 +122,7 @@ class ProductService implements ProductServiceInterface
      */
     public function updateProduct($id, Request $request): bool
     {
-        $product = $this->productRepository->getById($id);
+        $product = $this->productRepository->getWithVariations($id);
 
         if (!$product) {
             return false;
@@ -148,6 +148,51 @@ class ProductService implements ProductServiceInterface
                 $request->file('mockup'),
                 'product_upload'
             );
+        }
+
+        // Handle existing variations
+        if ($request->has('existing_color')) {
+            foreach ($request->existing_color as $variationId => $color) {
+                $variation = $product->variations->find($variationId);
+
+                if ($variation) {
+                    $variationData = ['color' => $color];
+
+                    // Check if there's a new image for this variation
+                    if ($request->hasFile("existing_image.$variationId")) {
+                        // Delete old image if exists
+                        if ($variation->image_url) {
+                            $this->fileUploadService->delete("product_upload/{$variation->image_url}");
+                        }
+
+                        // Upload new image
+                        $variationData['image_url'] = $this->fileUploadService->upload(
+                            $request->file("existing_image.$variationId"),
+                            'product_upload'
+                        );
+                    }
+
+                    // Update the variation
+                    $variation->update($variationData);
+                }
+            }
+        }
+
+        // Handle variation deletion
+        if ($request->has('delete_variations')) {
+            foreach ($request->delete_variations as $variationId) {
+                $variation = $product->variations->find($variationId);
+
+                if ($variation) {
+                    // Delete image file
+                    if ($variation->image_url) {
+                        $this->fileUploadService->delete("product_upload/{$variation->image_url}");
+                    }
+
+                    // Delete variation record
+                    $variation->delete();
+                }
+            }
         }
 
         // Handle new product variations if any
