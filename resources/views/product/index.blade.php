@@ -13,24 +13,26 @@
         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
     </div>
-    <div class="carousel-inner">
 
-        <!-- @foreach ($carousels as $carousel)
+    @if ($carousels->count() > 0)
+        <div class="carousel-inner">
+            <!-- @foreach ($carousels as $carousel)
+                <div class="carousel-item active">
+                    <img src="{{URL::asset('carousel')}}/{{$carousel->image_url}}" class="d-block w-100" alt="...">
+                </div>
+            @endforeach -->
             <div class="carousel-item active">
-                <img src="{{URL::asset('carousel')}}/{{$carousel->image_url}}" class="d-block w-100" alt="...">
+                <img src="{{URL::asset('carousel')}}/{{$carousels[0]->image_url}}" class="d-block w-100" height="350px" alt="...">
             </div>
-        @endforeach -->
-        <div class="carousel-item active">
-            <img src="{{URL::asset('carousel')}}/{{$carousels[0]->image_url}}" class="d-block w-100" height="350px" alt="...">
-        </div>
-        <div class="carousel-item">
-            <img src="{{URL::asset('carousel')}}/{{$carousels[1]->image_url}}" class="d-block w-100" height="350px" alt="...">
-        </div>
-        <div class="carousel-item">
-            <img src="{{URL::asset('carousel')}}/{{$carousels[2]->image_url}}" class="d-block w-100" height="350px" alt="...">
-        </div>
+            <div class="carousel-item">
+                <img src="{{URL::asset('carousel')}}/{{$carousels[1]->image_url}}" class="d-block w-100" height="350px" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="{{URL::asset('carousel')}}/{{$carousels[2]->image_url}}" class="d-block w-100" height="350px" alt="...">
+            </div>
 
-    </div>
+        </div>
+    @endif
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
