@@ -12,6 +12,22 @@
                     </div>
                 </div>
 
+                @if ($message = Session::get('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <i class="fas fa-check-circle me-1"></i>
+                        {{ $message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if ($message = Session::get('error'))
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        {{ $message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
                 <!-- Search and Filter Form -->
                 <div class="card mb-4">
                     <div class="card-header">
@@ -111,13 +127,33 @@
                                                 <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-sm btn-primary">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('admin.product.destroy', $product->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $product->id }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Delete Modal -->
+                                            <div class="modal fade" id="deleteModal{{ $product->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $product->id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header bg-danger text-white">
+                                                            <h5 class="modal-title" id="deleteModalLabel{{ $product->id }}">Confirm Delete</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Are you sure you want to delete the product <strong>{{ $product->name }}</strong>?</p>
+                                                            <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> This action cannot be undone and will remove all product variations and images.</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                            <form action="{{ route('admin.product.destroy', $product->id) }}" method="POST" class="d-inline">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger">Delete Product</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>

@@ -167,7 +167,24 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        $this->productService->deleteProduct($id);
+        // Check if product exists
+        $product = $this->productService->getProductById($id);
+
+        if (!$product) {
+            return redirect()->route('admin.product.index')->with('error', 'Product not found');
+        }
+
+        // Check if product has associated orders
+        if ($product->orders()->count() > 0) {
+            return redirect()->route('admin.product.index')->with('error', 'Cannot delete product with associated orders');
+        }
+
+        // Delete the product
+        $result = $this->productService->deleteProduct($id);
+
+        if (!$result) {
+            return redirect()->route('admin.product.index')->with('error', 'Failed to delete product');
+        }
 
         return redirect()->route('admin.product.index')->with('success', 'Product successfully deleted');
     }
