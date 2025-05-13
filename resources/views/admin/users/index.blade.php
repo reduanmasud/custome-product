@@ -5,11 +5,13 @@
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">User Management</h1>
-        @can('create users')
-        <a href="{{ route('admin.users.create') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-            <i class="fas fa-plus fa-sm text-white-50"></i> Add New User
-        </a>
-        @endcan
+        <x-admin.components.permission-button
+            permission="create users"
+            route="{{ route('admin.users.create') }}"
+            icon="plus"
+            label="Add New User"
+            class="btn-primary"
+        />
     </div>
 
     <!-- Alert Messages -->
@@ -94,37 +96,20 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>
-                                    @foreach($user->roles as $role)
-                                        <span class="badge badge-primary">{{ $role->name }}</span>
-                                    @endforeach
+                                    <x-admin.components.user-roles :user="$user" size="sm" />
                                 </td>
                                 <td>{{ $user->created_at->format('Y-m-d H:i') }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        @can('view users')
-                                        <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-info btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        @endcan
-                                        
-                                        @can('edit users')
-                                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        @endcan
-                                        
-                                        @can('delete users')
-                                        @if(auth()->id() != $user->id)
-                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                        @endif
-                                        @endcan
-                                    </div>
+                                    <x-admin.components.action-buttons
+                                        :id="$user->id"
+                                        viewRoute="{{ route('admin.users.show', $user->id) }}"
+                                        editRoute="{{ route('admin.users.edit', $user->id) }}"
+                                        deleteRoute="{{ auth()->id() != $user->id ? route('admin.users.destroy', $user->id) : '' }}"
+                                        viewPermission="view users"
+                                        editPermission="edit users"
+                                        deletePermission="delete users"
+                                        deleteConfirmMessage="Are you sure you want to delete this user?"
+                                    />
                                 </td>
                             </tr>
                         @empty
@@ -135,7 +120,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Pagination -->
             <div class="d-flex justify-content-end">
                 {{ $users->appends(request()->query())->links() }}

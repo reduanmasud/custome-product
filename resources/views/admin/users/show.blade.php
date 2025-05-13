@@ -4,13 +4,18 @@
 <div class="container-fluid">
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">User Details: {{ $user->name }}</h1>
+        <h1 class="h3 mb-0 text-gray-800">
+            User Details: {{ $user->name }}
+            <x-admin.components.user-roles :user="$user" />
+        </h1>
         <div>
-            @can('edit users')
-            <a href="{{ route('admin.users.edit', $user->id) }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-edit fa-sm text-white-50"></i> Edit User
-            </a>
-            @endcan
+            <x-admin.components.permission-button
+                permission="edit users"
+                route="{{ route('admin.users.edit', $user->id) }}"
+                icon="edit"
+                label="Edit User"
+                class="btn-primary"
+            />
             <a href="{{ route('admin.users.index') }}" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
                 <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back to Users
             </a>
@@ -54,31 +59,33 @@
                 <div class="col-md-6">
                     <h5 class="font-weight-bold">Roles</h5>
                     <div class="mb-3">
-                        @forelse($user->roles as $role)
-                            <span class="badge badge-primary p-2 mb-1">{{ ucfirst($role->name) }}</span>
-                        @empty
+                        @if($user->roles->count() > 0)
+                            @foreach($user->roles as $role)
+                                <x-admin.components.role-badge :role="$role->name" />
+                            @endforeach
+                        @else
                             <p class="text-muted">No roles assigned.</p>
-                        @endforelse
+                        @endif
                     </div>
-                    
+
                     <h5 class="font-weight-bold">Permissions</h5>
                     <div>
                         @php
                             $allPermissions = $user->getAllPermissions()->pluck('name')->toArray();
                             $permissionsByGroup = [];
-                            
+
                             foreach($allPermissions as $permission) {
                                 $parts = explode(' ', $permission);
                                 $group = $parts[0];
-                                
+
                                 if(!isset($permissionsByGroup[$group])) {
                                     $permissionsByGroup[$group] = [];
                                 }
-                                
+
                                 $permissionsByGroup[$group][] = $permission;
                             }
                         @endphp
-                        
+
                         @if(count($permissionsByGroup) > 0)
                             <div class="accordion" id="permissionsAccordion">
                                 @foreach($permissionsByGroup as $group => $permissions)

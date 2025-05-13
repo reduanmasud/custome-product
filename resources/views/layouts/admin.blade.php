@@ -173,7 +173,18 @@
     <!-- Nav Item - User Information -->
     <li class="nav-item dropdown no-arrow user-dropdown">
       <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="mr-2 d-none d-lg-inline text-gray-600 small me-2">{{ Auth::user()->name }}</span>
+        <span class="mr-2 d-none d-lg-inline text-gray-600 small me-2">
+          {{ Auth::user()->name }}
+          @if(Auth::user()->roles->count() > 0)
+            <span class="ms-1">
+              @foreach(Auth::user()->roles as $role)
+                <span class="badge bg-{{ $role->name == 'super-admin' ? 'danger' : ($role->name == 'admin' ? 'primary' : 'secondary') }} badge-sm">
+                  {{ ucfirst($role->name) }}
+                </span>
+              @endforeach
+            </span>
+          @endif
+        </span>
         <img class="img-profile rounded-circle" width="32" height="32" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=4e73df&color=ffffff">
       </a>
       <!-- Dropdown - User Information -->
@@ -182,10 +193,12 @@
           <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400 me-2"></i>
           Profile
         </a>
+        @can('edit users')
         <a class="dropdown-item" href="#">
           <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400 me-2"></i>
           Settings
         </a>
+        @endcan
         <div class="dropdown-divider"></div>
         <form action="{{route('logout')}}" method="post">
           @csrf
@@ -232,6 +245,7 @@
     </div>
 
     <!-- Nav Item - Products Menu -->
+    @canany(['view products', 'create products', 'edit products', 'delete products'])
     <li class="nav-item {{ request()->routeIs('admin.product.*') ? 'active' : '' }}">
       <a class="nav-link {{ request()->routeIs('admin.product.*') ? '' : 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProducts" aria-expanded="{{ request()->routeIs('admin.product.*') ? 'true' : 'false' }}" aria-controls="collapseProducts">
         <i class="fas fa-fw fa-box"></i>
@@ -240,20 +254,29 @@
       <div id="collapseProducts" class="collapse {{ request()->routeIs('admin.product.*') ? 'show' : '' }}" aria-labelledby="headingProducts" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
           <h6 class="collapse-header">Product Management:</h6>
+          @can('view products')
           <a class="collapse-item {{ request()->routeIs('admin.product.all') ? 'active' : '' }}" href="{{route('admin.product.all')}}">All Products</a>
+          @endcan
+          @can('create products')
           <a class="collapse-item {{ request()->routeIs('admin.product.add') ? 'active' : '' }}" href="{{ route('admin.product.add') }}">Add Product</a>
+          @endcan
+          @canany(['view categories', 'create categories', 'edit categories', 'delete categories'])
           <a class="collapse-item {{ request()->routeIs('admin.product.category.*') ? 'active' : '' }}" href="{{ route('admin.product.category.index') }}">Categories</a>
+          @endcanany
         </div>
       </div>
     </li>
+    @endcanany
 
     <!-- Nav Item - Orders -->
+    @canany(['view orders', 'create orders', 'edit orders', 'process orders'])
     <li class="nav-item {{ request()->routeIs('admin.orders') ? 'active' : '' }}">
       <a class="nav-link" href="{{route('admin.orders')}}">
         <i class="fas fa-fw fa-shopping-cart"></i>
         <span>Orders</span>
       </a>
     </li>
+    @endcanany
 
     <!-- Divider -->
     <hr class="sidebar-divider">
@@ -264,18 +287,24 @@
     </div>
 
     <!-- Nav Item - Carousel -->
+    @canany(['view carousel', 'edit carousel'])
     <li class="nav-item {{ request()->routeIs('admin.carousel') ? 'active' : '' }}">
       <a class="nav-link" href="{{route('admin.carousel')}}">
         <i class="fas fa-fw fa-images"></i>
         <span>Carousel Settings</span>
       </a>
     </li>
+    @endcanany
 
     <!-- Nav Item - User Management Menu -->
+    @canany(['view users', 'view roles', 'view permissions'])
     <li class="nav-item {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? 'active' : '' }}">
       <a class="nav-link {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? '' : 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUserManagement" aria-expanded="{{ request()->routeIs('admin.users.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? 'true' : 'false' }}" aria-controls="collapseUserManagement">
         <i class="fas fa-fw fa-users"></i>
         <span>User Management</span>
+        @if(auth()->user()->hasRole('super-admin'))
+        <span class="badge badge-pill bg-danger ms-2">Admin</span>
+        @endif
       </a>
       <div id="collapseUserManagement" class="collapse {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.permissions.*') ? 'show' : '' }}" aria-labelledby="headingUserManagement" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
@@ -292,6 +321,7 @@
         </div>
       </div>
     </li>
+    @endcanany
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
