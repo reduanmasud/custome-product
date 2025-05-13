@@ -75,7 +75,7 @@
                             <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text">$</span>
-                                <input type="number" step="0.01" min="0" name="price" value="{{ old('price', $product->price) }}" 
+                                <input type="number" step="0.01" min="0" name="price" value="{{ old('price', $product->price) }}"
                                     class="form-control @error('price') is-invalid @enderror"
                                     id="price" placeholder="0.00" required>
                                 @error('price')
@@ -87,7 +87,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label for="inventory" class="form-label">Inventory <span class="text-danger">*</span></label>
-                            <input type="number" min="0" value="{{ old('inventory', $product->inventory) }}" name="inventory" 
+                            <input type="number" min="0" value="{{ old('inventory', $product->inventory) }}" name="inventory"
                                 class="form-control @error('inventory') is-invalid @enderror"
                                 id="inventory" placeholder="Enter quantity in stock" required>
                             @error('inventory')
@@ -97,9 +97,9 @@
                     </div>
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                            <label for="category_id" class="form-label">Primary Category <span class="text-danger">*</span></label>
                             <select class="form-select @error('category_id') is-invalid @enderror" id="category_id" name="category_id" required>
-                                <option value="">Select a Category</option>
+                                <option value="">Select a Primary Category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
@@ -109,13 +109,38 @@
                             @error('category_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+
+                            <div class="mt-3">
+                                <label class="form-label">Additional Categories</label>
+                                <div class="border rounded p-3">
+                                    <div class="row">
+                                        @foreach ($categories as $category)
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="additional_categories[]"
+                                                        value="{{ $category->id }}" id="category_{{ $category->id }}"
+                                                        {{ (is_array(old('additional_categories', $product->categories->pluck('id')->toArray())) &&
+                                                            in_array($category->id, old('additional_categories', $product->categories->pluck('id')->toArray()))) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="category_{{ $category->id }}">
+                                                        {{ $category->name }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <small class="text-muted">Select additional categories that this product belongs to</small>
+                            </div>
+                            @error('additional_categories')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="available" name="available" value="1" 
+                        <input class="form-check-input" type="checkbox" id="available" name="available" value="1"
                             {{ old('available', $product->available) == 1 ? 'checked' : '' }}>
                         <label class="form-check-label" for="available">Product is available for purchase</label>
                     </div>
@@ -142,7 +167,7 @@
                                                 <div class="card-header d-flex justify-content-between align-items-center">
                                                     <span>Variation {{ $loop->iteration }}</span>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="delete_variations[]" 
+                                                        <input class="form-check-input" type="checkbox" name="delete_variations[]"
                                                             value="{{ $variation->id }}" id="delete-variation-{{ $variation->id }}">
                                                         <label class="form-check-label text-danger" for="delete-variation-{{ $variation->id }}">
                                                             Delete
@@ -152,20 +177,20 @@
                                                 <div class="card-body">
                                                     @if($variation->image_url)
                                                         <div class="text-center mb-3">
-                                                            <img src="{{ asset('product_upload/' . $variation->image_url) }}" 
-                                                                alt="Variation {{ $loop->iteration }}" 
+                                                            <img src="{{ asset('product_upload/' . $variation->image_url) }}"
+                                                                alt="Variation {{ $loop->iteration }}"
                                                                 class="img-thumbnail" style="max-height: 150px;">
                                                         </div>
                                                     @endif
                                                     <div class="mb-3">
                                                         <label class="form-label">Color</label>
-                                                        <input type="color" name="existing_color[{{ $variation->id }}]" 
-                                                            class="form-control form-control-color" 
+                                                        <input type="color" name="existing_color[{{ $variation->id }}]"
+                                                            class="form-control form-control-color"
                                                             value="{{ $variation->color ?? '#000000' }}" title="Choose color">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Replace Image</label>
-                                                        <input type="file" class="form-control" 
+                                                        <input type="file" class="form-control"
                                                             name="existing_image[{{ $variation->id }}]" accept="image/*">
                                                         <small class="text-muted">Leave empty to keep current image</small>
                                                     </div>
@@ -230,14 +255,14 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">Color (Optional)</label>
-                                        <input type="color" name="color[]" class="form-control form-control-color" 
+                                        <input type="color" name="color[]" class="form-control form-control-color"
                                             value="#000000" title="Choose color">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">Image <span class="text-danger">*</span></label>
-                                        <input type="file" class="form-control variation-image" 
+                                        <input type="file" class="form-control variation-image"
                                             name="product_image[]" accept="image/*" required>
                                     </div>
                                 </div>
@@ -249,35 +274,35 @@
                 `;
                 $('#variation').append(html);
                 $('#no-variations').hide();
-                
+
                 // Initialize the new file input
                 initFilePreview($('#variation .variation-item:last-child .variation-image'));
             });
-            
+
             // Remove variation
             $(document).on('click', '.remove-variation', function() {
                 $(this).closest('.variation-item').remove();
-                
+
                 // Show the info message if no variations are left
                 if ($('#variation').children('.variation-item').length === 0) {
                     $('#no-variations').show();
                 }
-                
+
                 // Renumber the variations
                 $('.variation-item').each(function(index) {
                     $(this).find('.card-header span').text('New Variation ' + (index + 1));
                 });
             });
-            
+
             // Initialize file preview for existing file inputs
             function initFilePreview(fileInput) {
                 fileInput.change(function() {
                     var file = this.files[0];
                     var preview = $(this).closest('.card-body').find('.image-preview');
-                    
+
                     if (file) {
                         var reader = new FileReader();
-                        
+
                         reader.onload = function(e) {
                             preview.html(`
                                 <div class="text-center">
@@ -285,14 +310,14 @@
                                 </div>
                             `);
                         }
-                        
+
                         reader.readAsDataURL(file);
                     } else {
                         preview.empty();
                     }
                 });
             }
-            
+
             // Initialize all existing file inputs
             $('.variation-image').each(function() {
                 initFilePreview($(this));

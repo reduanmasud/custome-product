@@ -31,9 +31,21 @@
                         <div class="col-md-9">{{ $product->sku ?? 'Not set' }}</div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-3 fw-bold">Category:</div>
+                        <div class="col-md-3 fw-bold">Primary Category:</div>
                         <div class="col-md-9">
-                            <span class="badge bg-info">{{ $product->category->name }}</span>
+                            <span class="badge bg-primary">{{ $product->category->name }}</span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3 fw-bold">Additional Categories:</div>
+                        <div class="col-md-9">
+                            @if($product->categories->count() > 0)
+                                @foreach($product->categories as $category)
+                                    <span class="badge bg-info me-1">{{ $category->name }}</span>
+                                @endforeach
+                            @else
+                                <span class="text-muted">No additional categories</span>
+                            @endif
                         </div>
                     </div>
                     <div class="row mb-3">

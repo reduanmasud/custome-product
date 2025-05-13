@@ -99,6 +99,11 @@ class ProductService implements ProductServiceInterface
             'inventory' => $request->inventory,
         ]);
 
+        // Handle additional categories
+        if ($request->has('additional_categories')) {
+            $product->categories()->attach($request->additional_categories);
+        }
+
         if ($request->has('product_image')) {
             foreach ($request->product_image as $key => $image) {
                 $imgUrl = $this->fileUploadService->upload($image, 'product_upload');
@@ -205,6 +210,15 @@ class ProductService implements ProductServiceInterface
                     'image_url' => $imgUrl,
                 ]);
             }
+        }
+
+        // Handle additional categories
+        if ($request->has('additional_categories')) {
+            // Sync the categories (detach all existing and attach the new ones)
+            $product->categories()->sync($request->additional_categories);
+        } else {
+            // If no categories are selected, detach all
+            $product->categories()->detach();
         }
 
         return $this->productRepository->update($id, $data);

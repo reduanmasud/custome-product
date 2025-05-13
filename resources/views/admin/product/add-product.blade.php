@@ -96,9 +96,9 @@
                     </div>
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                            <label for="category_id" class="form-label">Primary Category <span class="text-danger">*</span></label>
                             <select class="form-select @error('category_id') is-invalid @enderror" id="category_id" name="category_id" required>
-                                <option value="">Select a Category</option>
+                                <option value="">Select a Primary Category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
@@ -108,6 +108,27 @@
                             @error('category_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+
+                            <div class="mt-3">
+                                <label class="form-label">Additional Categories</label>
+                                <div class="border rounded p-3">
+                                    <div class="row">
+                                        @foreach ($categories as $category)
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="additional_categories[]"
+                                                        value="{{ $category->id }}" id="category_{{ $category->id }}"
+                                                        {{ (is_array(old('additional_categories')) && in_array($category->id, old('additional_categories'))) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="category_{{ $category->id }}">
+                                                        {{ $category->name }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <small class="text-muted">Select additional categories that this product belongs to</small>
+                            </div>
                         </div>
                     </div>
                 </div>

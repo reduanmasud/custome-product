@@ -29,8 +29,18 @@ class Product extends Model
 
 
 
+    /**
+     * Get the category that the product belongs to (legacy relationship)
+     */
     public function category(){
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Get the categories that belong to the product
+     */
+    public function categories(){
+        return $this->belongsToMany(Category::class);
     }
     public function variations()
     {
