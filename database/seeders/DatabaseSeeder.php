@@ -52,5 +52,8 @@ class DatabaseSeeder extends Seeder
             "name" => "undefined",
             "description" => "This is an undefined Category",
         ]);
+
+        // Seed roles and permissions
+        $this->call(RolesAndPermissionsSeeder::class);
     }
 }
