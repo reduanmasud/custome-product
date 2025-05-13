@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreCategoryRequest;
+use App\Http\Requests\Admin\UpdateCategoryRequest;
 use App\Interfaces\Services\CategoryServiceInterface;
 use Illuminate\Http\Request;
 
@@ -59,18 +61,16 @@ class CategoryController extends Controller
     /**
      * Store a newly created category in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Admin\StoreCategoryRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $category = $this->categoryService->createCategory($request);
 
-        $this->categoryService->createCategory($request);
+        if (!$category) {
+            return back()->with('error', 'Failed to create category. Please try again.');
+        }
 
         return back()->with('success', 'Category successfully added');
     }
@@ -112,21 +112,19 @@ class CategoryController extends Controller
     /**
      * Update the specified category in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Admin\UpdateCategoryRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCategoryRequest $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $result = $this->categoryService->updateCategory($id, $request);
 
-        $this->categoryService->updateCategory($id, $request);
+        if (!$result) {
+            return back()->with('error', 'Failed to update category. Please try again.');
+        }
 
-        return redirect()->route('admin.product.category')->with('success', 'Category successfully updated');
+        return redirect()->route('admin.product.category.index')->with('success', 'Category successfully updated');
     }
 
     /**

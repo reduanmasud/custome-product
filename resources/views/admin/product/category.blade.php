@@ -112,24 +112,69 @@
         </div>
 
         <div class="col-md-6">
-            <form method="post" action="{{route('admin.product.category.store')}}">
-                @if ($message = Session::get('success'))
-                <div class="alert alert-success alert-block">
-                    <strong>{{ $message }}</strong>
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Add New Category</h3>
                 </div>
-                @endif
-                <h3>Add Category</h3>
-                @csrf
-                <div class="mb-3">
-                    <label for="category_name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="category_name" name="name">
+                <div class="card-body">
+                    @if ($message = Session::get('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <strong>{{ $message }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+
+                    @if ($message = Session::get('error'))
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <strong>{{ $message }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+
+                    @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+
+                    <form method="post" action="{{ route('admin.product.category.store') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="category_name" class="form-label">Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="category_name" name="name" value="{{ old('name') }}" required>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="category_description" class="form-label">Description</label>
+                            <textarea class="form-control @error('description') is-invalid @enderror" id="category_description" name="description" rows="3">{{ old('description') }}</textarea>
+                            @error('description')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="category_image" class="form-label">Image</label>
+                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="category_image" name="image">
+                            <div class="form-text">Supported formats: JPEG, PNG, JPG, GIF. Max size: 2MB.</div>
+                            @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Add Category</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <label for="category_description" class="form-label">Description</label>
-                    <input type="text" class="form-control" id="category_description" name="description">
-                </div>
-                <button type="submit" class="btn btn-success">Add Category</button>
-            </form>
+            </div>
         </div>
 
     </div>
