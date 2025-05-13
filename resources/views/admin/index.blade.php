@@ -163,7 +163,7 @@
                             </div>
                             <i class="fas fa-chevron-right"></i>
                         </a>
-                        <a href="{{ route('admin.product.category') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <a href="{{ route('admin.product.category.index') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                             <div>
                                 <i class="fas fa-folder-plus fa-fw text-success me-2"></i>
                                 Manage Categories

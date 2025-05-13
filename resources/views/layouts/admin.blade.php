@@ -242,7 +242,7 @@
           <h6 class="collapse-header">Product Management:</h6>
           <a class="collapse-item {{ request()->routeIs('admin.product.all') ? 'active' : '' }}" href="{{route('admin.product.all')}}">All Products</a>
           <a class="collapse-item {{ request()->routeIs('admin.product.add') ? 'active' : '' }}" href="{{ route('admin.product.add') }}">Add Product</a>
-          <a class="collapse-item {{ request()->routeIs('admin.product.category') ? 'active' : '' }}" href="{{ route('admin.product.category') }}">Categories</a>
+          <a class="collapse-item {{ request()->routeIs('admin.product.category.*') ? 'active' : '' }}" href="{{ route('admin.product.category.index') }}">Categories</a>
         </div>
       </div>
     </li>
