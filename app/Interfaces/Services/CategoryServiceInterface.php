@@ -65,4 +65,29 @@ interface CategoryServiceInterface
      * @return bool
      */
     public function deleteCategory($id): bool;
+
+    /**
+     * Check if a category has products
+     *
+     * @param mixed $id
+     * @return bool
+     */
+    public function categoryHasProducts($id): bool;
+
+    /**
+     * Delete a category and all its products
+     *
+     * @param mixed $id
+     * @return bool
+     */
+    public function deleteCategoryWithProducts($id): bool;
+
+    /**
+     * Reassign products to another category and delete the original category
+     *
+     * @param mixed $id
+     * @param mixed $newCategoryId
+     * @return bool
+     */
+    public function reassignProductsAndDeleteCategory($id, $newCategoryId): bool;
 }

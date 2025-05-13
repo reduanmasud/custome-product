@@ -85,6 +85,9 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function() {
         Route::put('/product/category/{id}', [AdminCategoryController::class, 'update'])->name('product.category.update');
         Route::delete('/product/category/{id}', [AdminCategoryController::class, 'destroy'])->name('product.category.destroy');
 
+        // Category API Routes
+        Route::get('/api/category/{id}/has-products', [AdminCategoryController::class, 'checkHasProducts'])->name('api.category.has-products');
+
         // Product Detail Routes (must come after category routes to avoid conflicts)
         Route::get('/product/{id}', [AdminProductController::class, 'show'])->name('product.show');
         Route::get('/product/{id}/edit', [AdminProductController::class, 'edit'])->name('product.edit');

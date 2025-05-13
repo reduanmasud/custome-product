@@ -161,11 +161,95 @@ class CategoryService implements CategoryServiceInterface
         }
 
         // Check if category has products
-        if ($this->categoryRepository->hasProducts($id)) {
+        if ($this->categoryHasProducts($id)) {
             return false;
         }
 
         // Delete category image
+        if ($category->image) {
+            $this->fileUploadService->delete('category_images/' . $category->image);
+        }
+
+        return $this->categoryRepository->delete($id);
+    }
+
+    /**
+     * Check if a category has products
+     *
+     * @param mixed $id
+     * @return bool
+     */
+    public function categoryHasProducts($id): bool
+    {
+        $category = $this->categoryRepository->getById($id);
+
+        if (!$category) {
+            return false;
+        }
+
+        return $category->products && $category->products->count() > 0;
+    }
+
+    /**
+     * Delete a category and all its products
+     *
+     * @param mixed $id
+     * @return bool
+     */
+    public function deleteCategoryWithProducts($id): bool
+    {
+        $category = $this->categoryRepository->getById($id);
+
+        if (!$category) {
+            return false;
+        }
+
+        // Delete all products in this category
+        if ($category->products && $category->products->count() > 0) {
+            foreach ($category->products as $product) {
+                // Delete product images if they exist
+                if ($product->image) {
+                    $this->fileUploadService->delete('product_images/' . $product->image);
+                }
+
+                // Delete product
+                $product->delete();
+            }
+        }
+
+        // Delete category image if exists
+        if ($category->image) {
+            $this->fileUploadService->delete('category_images/' . $category->image);
+        }
+
+        return $this->categoryRepository->delete($id);
+    }
+
+    /**
+     * Reassign products to another category and delete the original category
+     *
+     * @param mixed $id
+     * @param mixed $newCategoryId
+     * @return bool
+     */
+    public function reassignProductsAndDeleteCategory($id, $newCategoryId): bool
+    {
+        $category = $this->categoryRepository->getById($id);
+        $newCategory = $this->categoryRepository->getById($newCategoryId);
+
+        if (!$category || !$newCategory) {
+            return false;
+        }
+
+        // Reassign all products to the new category
+        if ($category->products && $category->products->count() > 0) {
+            foreach ($category->products as $product) {
+                $product->category_id = $newCategoryId;
+                $product->save();
+            }
+        }
+
+        // Delete category image if exists
         if ($category->image) {
             $this->fileUploadService->delete('category_images/' . $category->image);
         }

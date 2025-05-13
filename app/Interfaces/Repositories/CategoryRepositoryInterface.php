@@ -34,6 +34,14 @@ interface CategoryRepositoryInterface
     public function getById($id): ?Category;
 
     /**
+     * Get category with its products
+     *
+     * @param mixed $id
+     * @return Category|null
+     */
+    public function getWithProducts($id): ?Category;
+
+    /**
      * Create a new category
      *
      * @param array $data
@@ -57,14 +65,6 @@ interface CategoryRepositoryInterface
      * @return bool
      */
     public function delete($id): bool;
-
-    /**
-     * Get category with products
-     *
-     * @param mixed $id
-     * @return Category|null
-     */
-    public function getWithProducts($id): ?Category;
 
     /**
      * Check if category has products

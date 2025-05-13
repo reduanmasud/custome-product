@@ -131,17 +131,77 @@ class CategoryController extends Controller
     /**
      * Remove the specified category from storage.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $result = $this->categoryService->deleteCategory($id);
+        $category = $this->categoryService->getCategoryById($id);
 
-        if (!$result) {
-            return back()->with('error', 'Cannot delete category with associated products');
+        if (!$category) {
+            return redirect()->route('admin.product.category.index')->with('error', 'Category not found');
         }
 
-        return redirect()->route('admin.product.category.index')->with('success', 'Category successfully deleted');
+        // Check if category has products
+        $hasProducts = $this->categoryService->categoryHasProducts($id);
+
+        if ($hasProducts) {
+            $productAction = $request->input('product_action');
+
+            if ($productAction === 'reassign') {
+                $reassignCategoryId = $request->input('reassign_category_id');
+
+                if (!$reassignCategoryId) {
+                    return back()->with('error', 'Please select a category to reassign products to');
+                }
+
+                // Reassign products to another category
+                $result = $this->categoryService->reassignProductsAndDeleteCategory($id, $reassignCategoryId);
+
+                if (!$result) {
+                    return back()->with('error', 'Failed to reassign products and delete category');
+                }
+
+                return redirect()->route('admin.product.category.index')->with('success', 'Products reassigned and category deleted successfully');
+            } elseif ($productAction === 'delete') {
+                // Delete category and all its products
+                $result = $this->categoryService->deleteCategoryWithProducts($id);
+
+                if (!$result) {
+                    return back()->with('error', 'Failed to delete category and its products');
+                }
+
+                return redirect()->route('admin.product.category.index')->with('success', 'Category and its products deleted successfully');
+            } else {
+                return back()->with('error', 'Please select what to do with the associated products');
+            }
+        } else {
+            // Delete category without products
+            $result = $this->categoryService->deleteCategory($id);
+
+            if (!$result) {
+                return back()->with('error', 'Failed to delete category');
+            }
+
+            return redirect()->route('admin.product.category.index')->with('success', 'Category deleted successfully');
+        }
+    }
+
+    /**
+     * Check if a category has products and return available categories for reassignment.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkHasProducts($id)
+    {
+        $hasProducts = $this->categoryService->categoryHasProducts($id);
+        $availableCategories = $this->categoryService->getAllCategories();
+
+        return response()->json([
+            'hasProducts' => $hasProducts,
+            'availableCategories' => $availableCategories
+        ]);
     }
 }
