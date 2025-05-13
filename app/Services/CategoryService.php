@@ -38,10 +38,10 @@ class CategoryService implements CategoryServiceInterface
     /**
      * Get category by ID
      *
-     * @param int $id
+     * @param mixed $id
      * @return Category|null
      */
-    public function getCategoryById(int $id): ?Category
+    public function getCategoryById($id): ?Category
     {
         return Category::find($id);
     }
@@ -72,14 +72,14 @@ class CategoryService implements CategoryServiceInterface
     /**
      * Update a category
      *
-     * @param int $id
+     * @param mixed $id
      * @param Request $request
      * @return bool
      */
-    public function updateCategory(int $id, Request $request): bool
+    public function updateCategory($id, Request $request): bool
     {
         $category = $this->getCategoryById($id);
-        
+
         if (!$category) {
             return false;
         }
@@ -94,7 +94,7 @@ class CategoryService implements CategoryServiceInterface
             if ($category->image) {
                 $this->fileUploadService->delete('category_images/' . $category->image);
             }
-            
+
             $data['image'] = $this->fileUploadService->upload(
                 $request->file('image'),
                 'category_images'
@@ -107,13 +107,13 @@ class CategoryService implements CategoryServiceInterface
     /**
      * Delete a category
      *
-     * @param int $id
+     * @param mixed $id
      * @return bool
      */
-    public function deleteCategory(int $id): bool
+    public function deleteCategory($id): bool
     {
         $category = $this->getCategoryById($id);
-        
+
         if (!$category) {
             return false;
         }

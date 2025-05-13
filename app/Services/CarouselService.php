@@ -38,10 +38,10 @@ class CarouselService implements CarouselServiceInterface
     /**
      * Get carousel by ID
      *
-     * @param int $id
+     * @param mixed $id
      * @return Carousel|null
      */
-    public function getCarouselById(int $id): ?Carousel
+    public function getCarouselById($id): ?Carousel
     {
         return Carousel::find($id);
     }
@@ -55,7 +55,7 @@ class CarouselService implements CarouselServiceInterface
     public function createOrUpdateCarousel(Request $request): Carousel
     {
         $carousel = Carousel::find($request->id);
-        
+
         if (!$carousel) {
             $carousel = new Carousel();
         }
@@ -64,13 +64,13 @@ class CarouselService implements CarouselServiceInterface
         $carousel->description = $request->description;
         $carousel->button_text = $request->button_text;
         $carousel->button_link = $request->button_link;
-        
+
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($carousel->image) {
                 $this->fileUploadService->delete('carousel/' . $carousel->image);
             }
-            
+
             $carousel->image = $this->fileUploadService->upload(
                 $request->file('image'),
                 'carousel'
@@ -78,20 +78,20 @@ class CarouselService implements CarouselServiceInterface
         }
 
         $carousel->save();
-        
+
         return $carousel;
     }
 
     /**
      * Delete a carousel item
      *
-     * @param int $id
+     * @param mixed $id
      * @return bool
      */
-    public function deleteCarousel(int $id): bool
+    public function deleteCarousel($id): bool
     {
         $carousel = $this->getCarouselById($id);
-        
+
         if (!$carousel) {
             return false;
         }

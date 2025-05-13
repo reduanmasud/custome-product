@@ -18,10 +18,10 @@ interface CarouselServiceInterface
     /**
      * Get carousel by ID
      *
-     * @param int $id
+     * @param mixed $id
      * @return Carousel|null
      */
-    public function getCarouselById(int $id): ?Carousel;
+    public function getCarouselById($id): ?Carousel;
 
     /**
      * Create or update a carousel item
@@ -34,10 +34,10 @@ interface CarouselServiceInterface
     /**
      * Delete a carousel item
      *
-     * @param int $id
+     * @param mixed $id
      * @return bool
      */
-    public function deleteCarousel(int $id): bool;
+    public function deleteCarousel($id): bool;
 
     /**
      * Handle file upload for carousel

@@ -18,10 +18,10 @@ interface OrderServiceInterface
     /**
      * Get order by ID
      *
-     * @param int $id
+     * @param mixed $id
      * @return Order|null
      */
-    public function getOrderById(int $id): ?Order;
+    public function getOrderById($id): ?Order;
 
     /**
      * Create a new order
@@ -34,26 +34,26 @@ interface OrderServiceInterface
     /**
      * Update an order
      *
-     * @param int $id
+     * @param mixed $id
      * @param Request $request
      * @return bool
      */
-    public function updateOrder(int $id, Request $request): bool;
+    public function updateOrder($id, Request $request): bool;
 
     /**
      * Update order status
      *
-     * @param int $id
+     * @param mixed $id
      * @param int $status
      * @return bool
      */
-    public function updateOrderStatus(int $id, int $status): bool;
+    public function updateOrderStatus($id, int $status): bool;
 
     /**
      * Delete an order
      *
-     * @param int $id
+     * @param mixed $id
      * @return bool
      */
-    public function deleteOrder(int $id): bool;
+    public function deleteOrder($id): bool;
 }

@@ -40,10 +40,10 @@ class ProductService implements ProductServiceInterface
     /**
      * Get product by ID
      *
-     * @param int $id
+     * @param mixed $id
      * @return Product|null
      */
-    public function getProductById(int $id): ?Product
+    public function getProductById($id): ?Product
     {
         return Product::find($id);
     }
@@ -91,7 +91,7 @@ class ProductService implements ProductServiceInterface
         if ($request->has('product_image')) {
             foreach ($request->product_image as $key => $image) {
                 $imgUrl = $this->fileUploadService->upload($image, 'product_upload');
-                
+
                 $product->variations()->create([
                     'color' => $request->color[$key] ?? null,
                     'image_url' => $imgUrl,
@@ -105,14 +105,14 @@ class ProductService implements ProductServiceInterface
     /**
      * Update a product
      *
-     * @param int $id
+     * @param mixed $id
      * @param Request $request
      * @return bool
      */
-    public function updateProduct(int $id, Request $request): bool
+    public function updateProduct($id, Request $request): bool
     {
         $product = $this->getProductById($id);
-        
+
         if (!$product) {
             return false;
         }
@@ -130,7 +130,7 @@ class ProductService implements ProductServiceInterface
             if ($product->mockup) {
                 $this->fileUploadService->delete('product_upload/' . $product->mockup);
             }
-            
+
             $data['mockup'] = $this->fileUploadService->upload(
                 $request->file('mockup'),
                 'product_upload'
@@ -143,13 +143,13 @@ class ProductService implements ProductServiceInterface
     /**
      * Delete a product
      *
-     * @param int $id
+     * @param mixed $id
      * @return bool
      */
-    public function deleteProduct(int $id): bool
+    public function deleteProduct($id): bool
     {
         $product = $this->getProductById($id);
-        
+
         if (!$product) {
             return false;
         }

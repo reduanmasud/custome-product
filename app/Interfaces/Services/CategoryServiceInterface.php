@@ -18,10 +18,10 @@ interface CategoryServiceInterface
     /**
      * Get category by ID
      *
-     * @param int $id
+     * @param mixed $id
      * @return Category|null
      */
-    public function getCategoryById(int $id): ?Category;
+    public function getCategoryById($id): ?Category;
 
     /**
      * Create a new category
@@ -34,17 +34,17 @@ interface CategoryServiceInterface
     /**
      * Update a category
      *
-     * @param int $id
+     * @param mixed $id
      * @param Request $request
      * @return bool
      */
-    public function updateCategory(int $id, Request $request): bool;
+    public function updateCategory($id, Request $request): bool;
 
     /**
      * Delete a category
      *
-     * @param int $id
+     * @param mixed $id
      * @return bool
      */
-    public function deleteCategory(int $id): bool;
+    public function deleteCategory($id): bool;
 }

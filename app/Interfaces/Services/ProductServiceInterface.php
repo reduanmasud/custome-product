@@ -18,10 +18,10 @@ interface ProductServiceInterface
     /**
      * Get product by ID
      *
-     * @param int $id
+     * @param mixed $id
      * @return Product|null
      */
-    public function getProductById(int $id): ?Product;
+    public function getProductById($id): ?Product;
 
     /**
      * Create a new product
@@ -42,19 +42,19 @@ interface ProductServiceInterface
     /**
      * Update a product
      *
-     * @param int $id
+     * @param mixed $id
      * @param Request $request
      * @return bool
      */
-    public function updateProduct(int $id, Request $request): bool;
+    public function updateProduct($id, Request $request): bool;
 
     /**
      * Delete a product
      *
-     * @param int $id
+     * @param mixed $id
      * @return bool
      */
-    public function deleteProduct(int $id): bool;
+    public function deleteProduct($id): bool;
 
     /**
      * Handle file upload for product
