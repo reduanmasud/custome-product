@@ -173,7 +173,7 @@ class ProductController extends Controller
     {
         $this->productService->updateProduct($id, $request);
 
-        return redirect()->route('admin.product.index')->with('success', 'Product successfully updated');
+        return redirect()->route('admin.product.all')->with('success', 'Product successfully updated');
     }
 
     /**
@@ -188,22 +188,22 @@ class ProductController extends Controller
         $product = $this->productService->getProductById($id);
 
         if (!$product) {
-            return redirect()->route('admin.product.index')->with('error', 'Product not found');
+            return redirect()->route('admin.product.all')->with('error', 'Product not found');
         }
 
         // Check if product has associated orders
         if ($product->orders()->count() > 0) {
-            return redirect()->route('admin.product.index')->with('error', 'Cannot delete product with associated orders');
+            return redirect()->route('admin.product.all')->with('error', 'Cannot delete product with associated orders');
         }
 
         // Delete the product
         $result = $this->productService->deleteProduct($id);
 
         if (!$result) {
-            return redirect()->route('admin.product.index')->with('error', 'Failed to delete product');
+            return redirect()->route('admin.product.all')->with('error', 'Failed to delete product');
         }
 
-        return redirect()->route('admin.product.index')->with('success', 'Product successfully deleted');
+        return redirect()->route('admin.product.all')->with('success', 'Product successfully deleted');
     }
 
     /**
