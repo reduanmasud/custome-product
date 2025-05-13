@@ -31,4 +31,12 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class);
     }
+
+    /**
+     * Alias for productsMany to match the Product model's method
+     */
+    public function products_many()
+    {
+        return $this->productsMany();
+    }
 }
