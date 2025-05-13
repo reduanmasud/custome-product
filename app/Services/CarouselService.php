@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Interfaces\Repositories\CarouselRepositoryInterface;
 use App\Interfaces\Services\CarouselServiceInterface;
 use App\Interfaces\Services\FileUploadServiceInterface;
 use App\Models\Carousel;
@@ -16,13 +17,22 @@ class CarouselService implements CarouselServiceInterface
     protected $fileUploadService;
 
     /**
+     * @var CarouselRepositoryInterface
+     */
+    protected $carouselRepository;
+
+    /**
      * CarouselService constructor.
      *
      * @param FileUploadServiceInterface $fileUploadService
+     * @param CarouselRepositoryInterface $carouselRepository
      */
-    public function __construct(FileUploadServiceInterface $fileUploadService)
-    {
+    public function __construct(
+        FileUploadServiceInterface $fileUploadService,
+        CarouselRepositoryInterface $carouselRepository
+    ) {
         $this->fileUploadService = $fileUploadService;
+        $this->carouselRepository = $carouselRepository;
     }
 
     /**
@@ -32,7 +42,7 @@ class CarouselService implements CarouselServiceInterface
      */
     public function getAllCarousels(): Collection
     {
-        return Carousel::all();
+        return $this->carouselRepository->getAll();
     }
 
     /**
@@ -43,7 +53,7 @@ class CarouselService implements CarouselServiceInterface
      */
     public function getCarouselById($id): ?Carousel
     {
-        return Carousel::find($id);
+        return $this->carouselRepository->getById($id);
     }
 
     /**
@@ -54,32 +64,36 @@ class CarouselService implements CarouselServiceInterface
      */
     public function createOrUpdateCarousel(Request $request): Carousel
     {
-        $carousel = Carousel::find($request->id);
+        $carousel = null;
+        $data = [
+            'title' => $request->title,
+            'description' => $request->description,
+            'button_text' => $request->button_text,
+            'button_link' => $request->button_link,
+        ];
 
-        if (!$carousel) {
-            $carousel = new Carousel();
+        if ($request->id) {
+            $carousel = $this->carouselRepository->getById($request->id);
         }
-
-        $carousel->title = $request->title;
-        $carousel->description = $request->description;
-        $carousel->button_text = $request->button_text;
-        $carousel->button_link = $request->button_link;
 
         if ($request->hasFile('image')) {
             // Delete old image if exists
-            if ($carousel->image) {
+            if ($carousel && $carousel->image) {
                 $this->fileUploadService->delete('carousel/' . $carousel->image);
             }
 
-            $carousel->image = $this->fileUploadService->upload(
+            $data['image'] = $this->fileUploadService->upload(
                 $request->file('image'),
                 'carousel'
             );
         }
 
-        $carousel->save();
-
-        return $carousel;
+        if ($carousel) {
+            $this->carouselRepository->update($carousel->id, $data);
+            return $this->carouselRepository->getById($carousel->id);
+        } else {
+            return $this->carouselRepository->create($data);
+        }
     }
 
     /**
@@ -90,7 +104,7 @@ class CarouselService implements CarouselServiceInterface
      */
     public function deleteCarousel($id): bool
     {
-        $carousel = $this->getCarouselById($id);
+        $carousel = $this->carouselRepository->getById($id);
 
         if (!$carousel) {
             return false;
@@ -101,7 +115,7 @@ class CarouselService implements CarouselServiceInterface
             $this->fileUploadService->delete('carousel/' . $carousel->image);
         }
 
-        return $carousel->delete();
+        return $this->carouselRepository->delete($id);
     }
 
     /**

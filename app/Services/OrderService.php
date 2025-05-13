@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\Interfaces\Services\OrderServiceInterface;
 use App\Models\Order;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,13 +11,27 @@ use Illuminate\Http\Request;
 class OrderService implements OrderServiceInterface
 {
     /**
+     * @var OrderRepositoryInterface
+     */
+    protected $orderRepository;
+
+    /**
+     * OrderService constructor.
+     *
+     * @param OrderRepositoryInterface $orderRepository
+     */
+    public function __construct(OrderRepositoryInterface $orderRepository)
+    {
+        $this->orderRepository = $orderRepository;
+    }
+    /**
      * Get all orders
      *
      * @return Collection
      */
     public function getAllOrders(): Collection
     {
-        return Order::with(['user', 'product'])->get();
+        return $this->orderRepository->getAll();
     }
 
     /**
@@ -27,7 +42,7 @@ class OrderService implements OrderServiceInterface
      */
     public function getOrderById($id): ?Order
     {
-        return Order::with(['user', 'product'])->find($id);
+        return $this->orderRepository->getWithRelations($id);
     }
 
     /**
@@ -38,7 +53,7 @@ class OrderService implements OrderServiceInterface
      */
     public function createOrder(Request $request): Order
     {
-        return Order::create([
+        return $this->orderRepository->create([
             'user_id' => $request->user_id ?? auth()->id(),
             'product_id' => $request->product_id,
             'quantity' => $request->quantity ?? 1,
@@ -60,13 +75,13 @@ class OrderService implements OrderServiceInterface
      */
     public function updateOrder($id, Request $request): bool
     {
-        $order = $this->getOrderById($id);
+        $order = $this->orderRepository->getById($id);
 
         if (!$order) {
             return false;
         }
 
-        return $order->update([
+        return $this->orderRepository->update($id, [
             'user_id' => $request->user_id ?? $order->user_id,
             'product_id' => $request->product_id ?? $order->product_id,
             'quantity' => $request->quantity ?? $order->quantity,
@@ -88,15 +103,7 @@ class OrderService implements OrderServiceInterface
      */
     public function updateOrderStatus($id, int $status): bool
     {
-        $order = $this->getOrderById($id);
-
-        if (!$order) {
-            return false;
-        }
-
-        return $order->update([
-            'status' => $status,
-        ]);
+        return $this->orderRepository->updateStatus($id, $status);
     }
 
     /**
@@ -107,12 +114,6 @@ class OrderService implements OrderServiceInterface
      */
     public function deleteOrder($id): bool
     {
-        $order = $this->getOrderById($id);
-
-        if (!$order) {
-            return false;
-        }
-
-        return $order->delete();
+        return $this->orderRepository->delete($id);
     }
 }

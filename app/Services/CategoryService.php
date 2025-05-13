@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Interfaces\Repositories\CategoryRepositoryInterface;
 use App\Interfaces\Services\CategoryServiceInterface;
 use App\Interfaces\Services\FileUploadServiceInterface;
 use App\Models\Category;
@@ -16,13 +17,22 @@ class CategoryService implements CategoryServiceInterface
     protected $fileUploadService;
 
     /**
+     * @var CategoryRepositoryInterface
+     */
+    protected $categoryRepository;
+
+    /**
      * CategoryService constructor.
      *
      * @param FileUploadServiceInterface $fileUploadService
+     * @param CategoryRepositoryInterface $categoryRepository
      */
-    public function __construct(FileUploadServiceInterface $fileUploadService)
-    {
+    public function __construct(
+        FileUploadServiceInterface $fileUploadService,
+        CategoryRepositoryInterface $categoryRepository
+    ) {
         $this->fileUploadService = $fileUploadService;
+        $this->categoryRepository = $categoryRepository;
     }
 
     /**
@@ -32,7 +42,7 @@ class CategoryService implements CategoryServiceInterface
      */
     public function getAllCategories(): Collection
     {
-        return Category::all();
+        return $this->categoryRepository->getAll();
     }
 
     /**
@@ -43,7 +53,7 @@ class CategoryService implements CategoryServiceInterface
      */
     public function getCategoryById($id): ?Category
     {
-        return Category::find($id);
+        return $this->categoryRepository->getById($id);
     }
 
     /**
@@ -66,7 +76,7 @@ class CategoryService implements CategoryServiceInterface
             );
         }
 
-        return Category::create($data);
+        return $this->categoryRepository->create($data);
     }
 
     /**
@@ -78,7 +88,7 @@ class CategoryService implements CategoryServiceInterface
      */
     public function updateCategory($id, Request $request): bool
     {
-        $category = $this->getCategoryById($id);
+        $category = $this->categoryRepository->getById($id);
 
         if (!$category) {
             return false;
@@ -101,7 +111,7 @@ class CategoryService implements CategoryServiceInterface
             );
         }
 
-        return $category->update($data);
+        return $this->categoryRepository->update($id, $data);
     }
 
     /**
@@ -112,14 +122,14 @@ class CategoryService implements CategoryServiceInterface
      */
     public function deleteCategory($id): bool
     {
-        $category = $this->getCategoryById($id);
+        $category = $this->categoryRepository->getById($id);
 
         if (!$category) {
             return false;
         }
 
         // Check if category has products
-        if ($category->products()->count() > 0) {
+        if ($this->categoryRepository->hasProducts($id)) {
             return false;
         }
 
@@ -128,6 +138,6 @@ class CategoryService implements CategoryServiceInterface
             $this->fileUploadService->delete('category_images/' . $category->image);
         }
 
-        return $category->delete();
+        return $this->categoryRepository->delete($id);
     }
 }

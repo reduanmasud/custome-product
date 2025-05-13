@@ -2,13 +2,12 @@
 
 namespace App\Services;
 
+use App\Interfaces\Repositories\ProductRepositoryInterface;
 use App\Interfaces\Services\FileUploadServiceInterface;
 use App\Interfaces\Services\ProductServiceInterface;
 use App\Models\Product;
-use App\Models\ProductVariation;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProductService implements ProductServiceInterface
 {
@@ -18,13 +17,22 @@ class ProductService implements ProductServiceInterface
     protected $fileUploadService;
 
     /**
+     * @var ProductRepositoryInterface
+     */
+    protected $productRepository;
+
+    /**
      * ProductService constructor.
      *
      * @param FileUploadServiceInterface $fileUploadService
+     * @param ProductRepositoryInterface $productRepository
      */
-    public function __construct(FileUploadServiceInterface $fileUploadService)
-    {
+    public function __construct(
+        FileUploadServiceInterface $fileUploadService,
+        ProductRepositoryInterface $productRepository
+    ) {
         $this->fileUploadService = $fileUploadService;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -34,7 +42,7 @@ class ProductService implements ProductServiceInterface
      */
     public function getAllProducts(): Collection
     {
-        return Product::all();
+        return $this->productRepository->getAll();
     }
 
     /**
@@ -45,7 +53,7 @@ class ProductService implements ProductServiceInterface
      */
     public function getProductById($id): ?Product
     {
-        return Product::find($id);
+        return $this->productRepository->getById($id);
     }
 
     /**
@@ -61,7 +69,7 @@ class ProductService implements ProductServiceInterface
             'product_upload'
         );
 
-        return Product::create([
+        return $this->productRepository->create([
             'name' => $request->product_name,
             'description' => $request->product_description,
             'category_id' => $request->product_category,
@@ -80,7 +88,7 @@ class ProductService implements ProductServiceInterface
     {
         $categoryId = $request->category_id ?? 1;
 
-        $product = Product::create([
+        $product = $this->productRepository->create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
@@ -92,7 +100,7 @@ class ProductService implements ProductServiceInterface
             foreach ($request->product_image as $key => $image) {
                 $imgUrl = $this->fileUploadService->upload($image, 'product_upload');
 
-                $product->variations()->create([
+                $this->productRepository->addVariation($product->id, [
                     'color' => $request->color[$key] ?? null,
                     'image_url' => $imgUrl,
                 ]);
@@ -111,7 +119,7 @@ class ProductService implements ProductServiceInterface
      */
     public function updateProduct($id, Request $request): bool
     {
-        $product = $this->getProductById($id);
+        $product = $this->productRepository->getById($id);
 
         if (!$product) {
             return false;
@@ -137,7 +145,7 @@ class ProductService implements ProductServiceInterface
             );
         }
 
-        return $product->update($data);
+        return $this->productRepository->update($id, $data);
     }
 
     /**
@@ -148,7 +156,7 @@ class ProductService implements ProductServiceInterface
      */
     public function deleteProduct($id): bool
     {
-        $product = $this->getProductById($id);
+        $product = $this->productRepository->getWithVariations($id);
 
         if (!$product) {
             return false;
@@ -167,7 +175,7 @@ class ProductService implements ProductServiceInterface
             $this->fileUploadService->delete('product_upload/' . $product->mockup);
         }
 
-        return $product->delete();
+        return $this->productRepository->delete($id);
     }
 
     /**
