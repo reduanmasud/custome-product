@@ -5,6 +5,7 @@ namespace App\Interfaces\Services;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface ProductServiceInterface
 {
@@ -73,4 +74,14 @@ interface ProductServiceInterface
      * @return string
      */
     public function handleBase64Upload(string $base64String, string $extension = 'jpg'): string;
+
+    /**
+     * Get paginated products
+     *
+     * @param int $perPage
+     * @param int $page
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function getPaginatedProducts(int $perPage = 15, int $page = 1, array $filters = []): LengthAwarePaginator;
 }

@@ -8,6 +8,7 @@ use App\Interfaces\Services\ProductServiceInterface;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductService implements ProductServiceInterface
 {
@@ -200,5 +201,18 @@ class ProductService implements ProductServiceInterface
     public function handleBase64Upload(string $base64String, string $extension = 'jpg'): string
     {
         return $this->fileUploadService->uploadBase64($base64String, 'product_upload', $extension);
+    }
+
+    /**
+     * Get paginated products
+     *
+     * @param int $perPage
+     * @param int $page
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function getPaginatedProducts(int $perPage = 15, int $page = 1, array $filters = []): LengthAwarePaginator
+    {
+        return $this->productRepository->getPaginated($perPage, $page, $filters);
     }
 }

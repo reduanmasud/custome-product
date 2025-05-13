@@ -4,6 +4,7 @@ namespace App\Interfaces\Repositories;
 
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface ProductRepositoryInterface
 {
@@ -79,4 +80,14 @@ interface ProductRepositoryInterface
      * @return mixed
      */
     public function addVariation($productId, array $variationData);
+
+    /**
+     * Get paginated products
+     *
+     * @param int $perPage
+     * @param int $page
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function getPaginated(int $perPage = 15, int $page = 1, array $filters = []): LengthAwarePaginator;
 }

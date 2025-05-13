@@ -38,12 +38,46 @@ class ProductController extends Controller
     /**
      * Display a listing of the products.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->productService->getAllProducts();
-        return view('admin.product.index', ['products' => $products]);
+        $perPage = $request->input('per_page', 15);
+        $page = $request->input('page', 1);
+
+        // Build filters array from request
+        $filters = [];
+
+        if ($request->filled('search')) {
+            $filters['search'] = $request->input('search');
+        }
+
+        if ($request->filled('category_id')) {
+            $filters['category_id'] = $request->input('category_id');
+        }
+
+        if ($request->filled('price_min')) {
+            $filters['price_min'] = $request->input('price_min');
+        }
+
+        if ($request->filled('price_max')) {
+            $filters['price_max'] = $request->input('price_max');
+        }
+
+        if ($request->has('available')) {
+            $filters['available'] = $request->input('available');
+        }
+
+        $products = $this->productService->getPaginatedProducts($perPage, $page, $filters);
+        $categories = $this->categoryService->getAllCategories();
+
+        return view('admin.product.index', [
+            'products' => $products,
+            'categories' => $categories,
+            'filters' => $filters,
+            'perPage' => $perPage
+        ]);
     }
 
     /**
@@ -87,11 +121,11 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = $this->productService->getProductById($id);
-        
+
         if (!$product) {
             abort(404);
         }
-        
+
         return view('admin.product.show', ['product' => $product]);
     }
 
@@ -104,13 +138,13 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = $this->productService->getProductById($id);
-        
+
         if (!$product) {
             abort(404);
         }
-        
+
         $categories = $this->categoryService->getAllCategories();
-        
+
         return view('admin.product.edit', [
             'product' => $product,
             'categories' => $categories
@@ -150,7 +184,7 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $this->productService->deleteProduct($id);
-        
+
         return redirect()->route('admin.product.index')->with('success', 'Product successfully deleted');
     }
 
