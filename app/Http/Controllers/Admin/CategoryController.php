@@ -83,7 +83,8 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        $category = $this->categoryService->getCategoryById($id);
+        // Get category with its products
+        $category = $this->categoryService->getCategoryWithProducts($id);
 
         if (!$category) {
             abort(404);
@@ -141,6 +142,6 @@ class CategoryController extends Controller
             return back()->with('error', 'Cannot delete category with associated products');
         }
 
-        return redirect()->route('admin.product.category')->with('success', 'Category successfully deleted');
+        return redirect()->route('admin.product.category.index')->with('success', 'Category successfully deleted');
     }
 }

@@ -34,6 +34,14 @@ interface CategoryServiceInterface
     public function getCategoryById($id): ?Category;
 
     /**
+     * Get category with its products
+     *
+     * @param mixed $id
+     * @return Category|null
+     */
+    public function getCategoryWithProducts($id): ?Category;
+
+    /**
      * Create a new category
      *
      * @param Request $request

@@ -70,6 +70,17 @@ class CategoryService implements CategoryServiceInterface
     }
 
     /**
+     * Get category with its products
+     *
+     * @param mixed $id
+     * @return Category|null
+     */
+    public function getCategoryWithProducts($id): ?Category
+    {
+        return $this->categoryRepository->getWithProducts($id);
+    }
+
+    /**
      * Create a new category
      *
      * @param Request $request
@@ -112,16 +123,24 @@ class CategoryService implements CategoryServiceInterface
             'description' => $request->description ?? $category->description,
         ];
 
+        // Handle image upload or removal
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($category->image) {
                 $this->fileUploadService->delete('category_images/' . $category->image);
             }
 
+            // Upload new image
             $data['image'] = $this->fileUploadService->upload(
                 $request->file('image'),
                 'category_images'
             );
+        } elseif ($request->has('remove_image') && $request->remove_image == 1) {
+            // Remove existing image if requested
+            if ($category->image) {
+                $this->fileUploadService->delete('category_images/' . $category->image);
+                $data['image'] = null;
+            }
         }
 
         return $this->categoryRepository->update($id, $data);
