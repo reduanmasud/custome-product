@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\CarouselController as AdminCarouselController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\CarouselController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
@@ -60,19 +64,36 @@ Route::prefix("user")->group(function(){
 
 Route::middleware('auth')->prefix('admin')->as('admin.')->group(function() {
 
-    Route::middleware('is_admin')->group( function () {
+    Route::middleware('is_admin')->group(function () {
         Route::get('/index', fn()=>view('admin.index'))->name('/');
 
-        Route::get('/carousel', [CarouselController::class, 'index'])->name('carousel');
-        Route::post('/carousel', [CarouselController::class, 'store']);
+        // Carousel Routes
+        Route::get('/carousel', [AdminCarouselController::class, 'index'])->name('carousel');
+        Route::post('/carousel', [AdminCarouselController::class, 'store']);
+        Route::delete('/carousel/{id}', [AdminCarouselController::class, 'destroy'])->name('carousel.destroy');
 
-        Route::get('/product', [ProductController::class, 'admin_index'])->name('product.all');
-        Route::get('/product/add', [ProductController::class, 'admin_add_product'])->name('product.add');
-        Route::post('/product/add', [ProductController::class, 'admin_store']);
+        // Product Routes
+        Route::get('/product', [AdminProductController::class, 'index'])->name('product.all');
+        Route::get('/product/create', [AdminProductController::class, 'create'])->name('product.add');
+        Route::post('/product', [AdminProductController::class, 'store'])->name('product.store');
+        Route::get('/product/{id}', [AdminProductController::class, 'show'])->name('product.show');
+        Route::get('/product/{id}/edit', [AdminProductController::class, 'edit'])->name('product.edit');
+        Route::put('/product/{id}', [AdminProductController::class, 'update'])->name('product.update');
+        Route::delete('/product/{id}', [AdminProductController::class, 'destroy'])->name('product.destroy');
 
-        Route::get('/product/category',[ProductController::class, 'product_category'])->name('product.category');
+        // Category Routes
+        Route::get('/product/category', [AdminCategoryController::class, 'index'])->name('product.category');
+        Route::post('/product/category', [AdminCategoryController::class, 'store'])->name('product.category.store');
+        Route::get('/product/category/{id}', [AdminCategoryController::class, 'show'])->name('product.category.show');
+        Route::get('/product/category/{id}/edit', [AdminCategoryController::class, 'edit'])->name('product.category.edit');
+        Route::put('/product/category/{id}', [AdminCategoryController::class, 'update'])->name('product.category.update');
+        Route::delete('/product/category/{id}', [AdminCategoryController::class, 'destroy'])->name('product.category.destroy');
 
-        Route::get('/order', [ProductController::class, 'orders'])->name('orders');
+        // Order Routes
+        Route::get('/order', [AdminOrderController::class, 'index'])->name('orders');
+        Route::get('/order/{id}', [AdminOrderController::class, 'show'])->name('order.show');
+        Route::put('/order/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('order.update.status');
+        Route::delete('/order/{id}', [AdminOrderController::class, 'destroy'])->name('order.destroy');
     });
 
 });
