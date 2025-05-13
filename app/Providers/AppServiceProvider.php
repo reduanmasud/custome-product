@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
      */
     private function registerBladeComponents()
     {
-        // Register anonymous components from the resources/views/admin/components directory
-        \Illuminate\Support\Facades\Blade::anonymousComponentPath(resource_path('views/admin/components'), 'admin.components');
+        // Register class-based components with the 'admin' namespace
+        \Illuminate\Support\Facades\Blade::componentNamespace('App\\View\\Components\\Admin', 'admin');
     }
 }
