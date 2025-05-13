@@ -76,10 +76,6 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function() {
         Route::get('/product', [AdminProductController::class, 'index'])->name('product.all');
         Route::get('/product/create', [AdminProductController::class, 'create'])->name('product.add');
         Route::post('/product', [AdminProductController::class, 'store'])->name('product.store');
-        Route::get('/product/{id}', [AdminProductController::class, 'show'])->name('product.show');
-        Route::get('/product/{id}/edit', [AdminProductController::class, 'edit'])->name('product.edit');
-        Route::put('/product/{id}', [AdminProductController::class, 'update'])->name('product.update');
-        Route::delete('/product/{id}', [AdminProductController::class, 'destroy'])->name('product.destroy');
 
         // Category Routes
         Route::get('/product/category', [AdminCategoryController::class, 'index'])->name('product.category');
@@ -88,6 +84,12 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function() {
         Route::get('/product/category/{id}/edit', [AdminCategoryController::class, 'edit'])->name('product.category.edit');
         Route::put('/product/category/{id}', [AdminCategoryController::class, 'update'])->name('product.category.update');
         Route::delete('/product/category/{id}', [AdminCategoryController::class, 'destroy'])->name('product.category.destroy');
+
+        // Product Detail Routes (must come after category routes to avoid conflicts)
+        Route::get('/product/{id}', [AdminProductController::class, 'show'])->name('product.show');
+        Route::get('/product/{id}/edit', [AdminProductController::class, 'edit'])->name('product.edit');
+        Route::put('/product/{id}', [AdminProductController::class, 'update'])->name('product.update');
+        Route::delete('/product/{id}', [AdminProductController::class, 'destroy'])->name('product.destroy');
 
         // Order Routes
         Route::get('/order', [AdminOrderController::class, 'index'])->name('orders');

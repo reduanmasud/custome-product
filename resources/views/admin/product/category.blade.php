@@ -29,7 +29,16 @@
                     <tr>
                         <td>{{$category->id}}</td>
                         <td>{{$category->name}}</td>
-                        <td>E||D||U</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('admin.product.category.edit', $category->id) }}" class="btn btn-sm btn-primary">Edit</a>
+                                <form action="{{ route('admin.product.category.destroy', $category->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
+                                </form>
+                            </div>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -45,7 +54,7 @@
         </div>
 
         <div class="col-md-6">
-            <form method="post" action="{{route('product.category')}}">
+            <form method="post" action="{{route('admin.product.category.store')}}">
                 @if ($message = Session::get('success'))
                 <div class="alert alert-success alert-block">
                     <strong>{{ $message }}</strong>
