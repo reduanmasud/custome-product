@@ -5,7 +5,7 @@
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">User Management</h1>
-        <x-admin.components.permission-button
+        <x-admin.permission-button
             permission="create users"
             route="{{ route('admin.users.create') }}"
             icon="plus"
@@ -96,11 +96,11 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>
-                                    <x-admin.components.user-roles :user="$user" size="sm" />
+                                    <x-admin.user-roles :user="$user" size="sm" />
                                 </td>
                                 <td>{{ $user->created_at->format('Y-m-d H:i') }}</td>
                                 <td>
-                                    <x-admin.components.action-buttons
+                                    <x-admin.action-buttons
                                         :id="$user->id"
                                         viewRoute="{{ route('admin.users.show', $user->id) }}"
                                         editRoute="{{ route('admin.users.edit', $user->id) }}"
